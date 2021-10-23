@@ -72,12 +72,7 @@ async def execute(bot, msg, path):
 
 		if result < succChance:
 
-			# get a percentage between 1% and 50%, distributed on the low end
-			p1 = int((random.random() * 2.7) + 1)
-			p2 = int((random.random() * 2.7) + 1)
-			p3 = int((random.random() * 2.7) + 1)
-			percent = p1 * p2 * p3 / 100
-
+			percent = percent()
 			log.debug(percent)
 
 
@@ -104,11 +99,8 @@ async def execute(bot, msg, path):
 
 		elif result < failChance:
 
-			# get a percentage between 1% and 50%, distributed on the low end
-			p1 = int((random.random() * 2.7) + 1)
-			p2 = int((random.random() * 2.7) + 1)
-			p3 = int((random.random() * 2.7) + 1)
-			percent = p1 * p2 * p3 / 100
+
+			percent = percent()
 
 			log.debug(percent)
 
@@ -162,3 +154,12 @@ async def execute(bot, msg, path):
 		log.info(f'Steal failed: Hasn\'t been an hour, {minutes} minutes left')
 		await msg.channel.send(f'Oops! You have to wait another {minutes} minutes')
 
+
+def percent():
+
+	# get a percentage between 1% and 50%, distributed on the low end
+	p1 = int((random.random() * 2.7) + 1)
+	p2 = int((random.random() * 2.7) + 1)
+	p3 = int((random.random() * 2.7) + 1)
+
+	return (p1 * p2 * p3 / 100)

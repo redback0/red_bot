@@ -1,3 +1,5 @@
 .eco
 *.pyc
 /JS bot/**
+/TEMP/**
+/guilds/**
