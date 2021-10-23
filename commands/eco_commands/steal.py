@@ -72,7 +72,7 @@ async def execute(bot, msg, path):
 
 		if result < succChance:
 
-			percent = percent()
+			percent = _percent()
 			log.debug(percent)
 
 
@@ -100,7 +100,7 @@ async def execute(bot, msg, path):
 		elif result < failChance:
 
 
-			percent = percent()
+			percent = _percent()
 
 			log.debug(percent)
 
@@ -155,7 +155,7 @@ async def execute(bot, msg, path):
 		await msg.channel.send(f'Oops! You have to wait another {minutes} minutes')
 
 
-def percent():
+def _percent():
 
 	# get a percentage between 1% and 50%, distributed on the low end
 	p1 = int((random.random() * 2.7) + 1)
