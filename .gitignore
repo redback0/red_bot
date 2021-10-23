@@ -1,5 +1,5 @@
-.eco
+.env
 *.pyc
 /JS bot/**
 /TEMP/**
-/guilds/**
+**/guilds/**

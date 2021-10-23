@@ -57,7 +57,14 @@ def writeFile(path, userdata):
 	# file doesn't exist
 	if not os.path.isfile(path):
 		# the file doesn't exist; create it, write in userdata
-		with open(path, mode='wt', encoding='utf-8') as file:
+
+		# --- THIS SHOULD NOT BE A STRING, SHOULD CALL TO A VARIABLE ---
+		folder = path[:path.rfind('/')]
+		if not os.path.exists(folder):
+			os.mkdir(folder)
+			log.debug(f'Created folder: {folder}')
+
+		with open(path, mode='x', encoding='utf-8') as file:
 			json.dump(userdata, file, indent=4)
 			log.info(f'Created and wrote to file: {path}')
 
