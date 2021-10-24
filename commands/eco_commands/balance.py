@@ -1,5 +1,6 @@
 import datetime
 import logging
+import globs
 import discord
 from importlib import reload
 
@@ -7,7 +8,7 @@ import commands.eco_commands.eco_common as eco_common
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
+log.setLevel(globs.LOGLEVEL)
 
 name = 'balance'
 description = 'Check your balances'
@@ -15,7 +16,7 @@ servers = []
 
 
 # check the balance of a users wallet and bank
-async def execute(bot, msg, path):
+async def _execute(bot, msg, path):
 	reload(eco_common)
 
 	log.debug(msg.mentions)

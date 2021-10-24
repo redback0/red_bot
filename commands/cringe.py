@@ -1,15 +1,15 @@
 import random
 import logging
+import globs
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(globs.LOGLEVEL)
 
 name = 'cringe'
 description = "Tests the cringe level of @user"
-servers = []
 
-async def execute(bot, msg):
+async def _execute(bot, msg):
 	if msg.content.find(' ') > 0:
 		msgtrim = msg.content[msg.content.find(' ')+1:]
 

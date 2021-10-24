@@ -2,13 +2,14 @@ import datetime
 import random
 import math
 import logging
+import globs
 from importlib import reload
 
 import commands.eco_commands.eco_common as eco_common
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(globs.LOGLEVEL)
 
 name = 'steal'
 description = 'Steal points from another player'
@@ -19,11 +20,12 @@ MIN_WALLET = 2000
 
 
 # steal points from another player
-async def execute(bot, msg, path):
+async def _execute(bot, msg, path):
 	reload(eco_common)
 
 	if msg.mentions == []:
-		await msg.channel.send('Who are you stealing from? usage: `.eco steal <@user>`')
+		await msg.channel.send(
+			'Who are you stealing from? usage: `.eco steal <@user>`')
 		log.info('no user to steal from')
 		return
 	elif msg.mentions[0] == msg.author:
@@ -80,11 +82,13 @@ async def execute(bot, msg, path):
 			if stealerdata['wallet'] > stealeedata['wallet']:
 				steal = int(stealeedata['wallet'] * percent)
 				log.debug(
-					f'using stealee wallet: {stealeedata["wallet"]} * {percent} = {steal}')
+					f'using stealee wallet: ' +
+					f'{stealeedata["wallet"]} * {percent} = {steal}')
 			else:
 				steal = int(stealerdata['wallet'] * percent)
 				log.debug(
-					f'using stealer wallet: {stealerdata["wallet"]} * {percent} = {steal}')
+					f'using stealer wallet: ' + 
+					f'{stealerdata["wallet"]} * {percent} = {steal}')
 
 
 			# set the new values
@@ -114,7 +118,8 @@ async def execute(bot, msg, path):
 			else:
 				steal = int(stealerdata['wallet'] * percent)
 				log.debug(
-					f'using stealer wallet: {stealerdata["wallet"]} * {percent} = {steal}')
+					f'using stealer wallet: ' + 
+					f'{stealerdata["wallet"]} * {percent} = {steal}')
 
 
 			# set the new values
@@ -124,7 +129,8 @@ async def execute(bot, msg, path):
 
 			log.info(f'Steal fail: stealing -{steal} points')
 			await msg.channel.send(
-				f'oops, got caught, you gave {steal} points to <@!{msg.mentions[0].id}>')
+				'oops, got caught, you gave ' + 
+				f'{steal} points to <@!{msg.mentions[0].id}>')
 
 		# 10% chance to do nothing
 		elif result < 90:
@@ -136,7 +142,8 @@ async def execute(bot, msg, path):
 		else:
 			# something that's uncommon but increadibly undesirable
 			# shouldn't change wallet, and shouldn't effect things with a cooldown
-			# once .eco inv is implemented, this will actually do something interesting
+			# once .eco inv is implemented, this will actually do 
+			# something interesting
 			log.warning('BONUS UNIMPLEMENTED')
 			await msg.channel.send('Bonus: Unimplemented')
 			return

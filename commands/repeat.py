@@ -1,15 +1,15 @@
 import logging
+import globs
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(globs.LOGLEVEL)
 
 name = 'repeat'
 description = "Send a message!"
-servers = []
 
 # repeats text
-async def execute(bot, msg):
+async def _execute(bot, msg):
 
 	if msg.author.id == 208038162180734976:
 		if msg.content.find(' ') > 0:

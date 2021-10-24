@@ -1,12 +1,13 @@
 import datetime
 import logging
+import globs
 from importlib import reload
 
 import commands.eco_commands.eco_common as eco_common
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
+log.setLevel(globs.LOGLEVEL)
 
 name = 'daily'
 description = 'Get points daily!'
@@ -14,7 +15,7 @@ servers = []
 
 
 # give a user 500 points, usable once per day
-async def execute(bot, msg, path):
+async def _execute(bot, msg, path):
 	reload(eco_common)
 
 	userdata = eco_common.readFile(path, str(msg.author.id))

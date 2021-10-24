@@ -1,13 +1,14 @@
 import logging
+import globs
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(globs.LOGLEVEL)
 
 name = 'test'
 description = 'a test command'
-servers = []
+permissions = "creator"
 
-async def execute(bot, msg):
+async def _execute(bot, msg):
 	await msg.channel.send('Test successful')
 	log.info('sent message: Test successful')

@@ -1,12 +1,13 @@
 import datetime
 import logging
+import globs
 from importlib import reload
 
 import commands.eco_commands.eco_common as eco_common
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(globs.LOGLEVEL)
 
 name = 'deposit'
 description = 'Put points into your bank. You can only use this once per day'
@@ -17,11 +18,13 @@ bankMaxPer = 5
 walletMinPer = 0.1
 
 # give a user 500 points, usable once per day
-async def execute(bot, msg, path):
+async def _execute(bot, msg, path):
 	reload(eco_common)
 
 	userdata = eco_common.readFile(path, str(msg.author.id))
 	log.debug(userdata)
+
+	user = msg.author.name + "#" + msg.author.discriminator
 
 
 	today = datetime.date.today()
@@ -31,15 +34,14 @@ async def execute(bot, msg, path):
 			userdata.get('lastDeposit', datetime.date.min.isoformat())) < today:
 
 		log.info(
-			f'{msg.author.name}#{msg.author.discriminator} ' + 
-			'has already deposited today')
+			f'{user} has already deposited today')
 		await msg.channel.send('Sorry, you can only use this once per day')
 		return
 
 	# check if the user is able to store more in their bank
 	elif userdata.get('bank') >= userdata.get('walletMax') * bankMaxPer:
 		log.info(
-			f'{msg.author.name}#{msg.author.discriminator}\'s bank is already full: ' +
+			f'{user}\'s bank is already full: ' +
 			f'{userdata.get("bank")} >= {userdata.get("walletMax") * bankMaxPer}')
 		await msg.channel.send('Your bank is already full')
 		return
@@ -48,8 +50,8 @@ async def execute(bot, msg, path):
 	elif (userdata.get('wallet') <= userdata.get('walletMax') * walletMinPer or 
 			userdata.get('wallet') <= 2000):
 		log.info(
-			f'{msg.author.name}#{msg.author.discriminator}\'s wallet is too empty: ' +
-			f'{userdata.get("wallet")} <= {userdata.get("walletMax") * walletMinPer}')
+			f'{user}\'s wallet is too empty: {userdata.get("wallet")} ' + 
+			f'<= {userdata.get("walletMax") * walletMinPer}')
 		await msg.channel.send('Your wallet is too empty for this')
 		return
 
@@ -80,13 +82,16 @@ async def execute(bot, msg, path):
 		dep = maxDep
 	else:
 		try:
-			dep = int(floor(args[1]))
+			dep = int(args[1])
 		except ValueError:
 			log.info('User entered non integer')
 			await msg.channel.send(
 				f'{args[1]} is not a number. ' + 
 				f'Please type all, or enter the amount you\'d like to deposit')
 			return
+
+		if dep > maxDep:
+			dep = maxDep
 
 	log.info(f'Depositing {dep} points')
 

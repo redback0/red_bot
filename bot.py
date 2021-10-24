@@ -1,23 +1,26 @@
 import os
 import sys
+import traceback
 import logging
-from importlib import reload
-
 import discord
 from dotenv import load_dotenv
+import globs
 
+globs.init()
+DEF_PREFIX = globs.DEF_PREFIX
+CREATOR = globs.CREATOR
 # import a dictionary of all commands
 # this allows me to link a string to a module
 import commands.index as cmd_index
 
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
-DEF_PREFIX = os.getenv('DEF_PREFIX')
-CREATOR = int(os.getenv('CREATOR'))
+
+
+
+logging.basicConfig()
+log = logging.getLogger(__name__)
+log.setLevel(globs.LOGLEVEL)
 
 log.info(f'Prefix: {DEF_PREFIX}')
 
@@ -61,22 +64,26 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 				log.info('Generating help message')
 				helpmsgdesc = f'{DEF_PREFIX}help: Displays this list\n';
 
-				if msg.guild == None: 
-					guild = None
-				else: 
-					guild = msg.guild.id
-
-				log.debug(guild)
-
-				reload(cmd_index)
 
 				for key in cmd_index.cmds.keys():
-					if not cmd_index.cmds[key].servers == []:
-						if not guild in cmd_index.cmds[key].servers:
+					
+					if cmd_index.cmds[key].permissions == "guilds":
+						if msg.guild == None:
+							guild = None
+						else: 
+							guild = msg.guild.id
+						log.debug(f"guild ID: {guild}")
+
+						if not guild in cmd_index[key].guilds:
 							return
 
+
 					helpmsgdesc += f'{DEF_PREFIX}{key}: '
-					helpmsgdesc += f'{cmd_index.cmds[key].description}\n'
+
+					if not cmd_index.cmds[key].name == key:
+						helpmsgdesc += f'Alias for {cmd_index.cmds[key].name}\n'
+					else:
+						helpmsgdesc += f'{cmd_index.cmds[key].description}\n'
 
 
 				helpmsg = discord.Embed(title='Commands', description=helpmsgdesc)
@@ -88,23 +95,25 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 				return
 
-# REWRITE THIS TO BE THE SAME AS IN eco.py ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			
 			# regular commands
 			try:
-				# reload the files to be sure they're up to date
-				reload(cmd_index)
-				reload(cmd_index.cmds[command])
 
-				log.debug(cmd_index.cmds[command])
-				# run the command
-				await cmd_index.cmds[command].execute(self, msg)
-				log.info(f'Command executed: {command}')
-			except Exception as e:
-				log.info(f'Invalid command: {command}')
-				log.debug(e)
+				if cmd_index.cmds.get(command, False):
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					log.debug(cmd_index.cmds[command])
+					# run the command
+					await cmd_index.cmds[command].execute(self, msg)
+					log.info(f'Command executed: {command}')
+				else:
+					log.info(f'Invalid command {command}')
+
+			except Exception as err:
+				
+				log.warning(f"Command {command} had a problem:")
+				log.warning(traceback.format_exc())
+				log.warning(err)
+
 
 intents = discord.Intents().all()
 intents.presences = False

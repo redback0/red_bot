@@ -1,14 +1,15 @@
 import os
 import json
 import logging
+import globs
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
+log.setLevel(globs.LOGLEVEL)
 
 
 def_userdata = {
-	'wallet': 500,
+	'wallet': 2000,
 	'bank': 0
 }
 

@@ -1,4 +1,5 @@
 import logging
+import globs
 from importlib import reload
 import discord
 
@@ -6,7 +7,7 @@ import commands.eco_commands.eco_common as eco_common
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
+log.setLevel(globs.LOGLEVEL)
 
 name = 'top'
 description = 'Shows a leaderboard'
@@ -14,7 +15,7 @@ servers = []
 
 
 # the leaderboard command
-async def execute(bot, msg, path):
+async def _execute(bot, msg, path):
 	reload(eco_common)
 
 	data = eco_common.readAll(path)

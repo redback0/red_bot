@@ -1,12 +1,13 @@
 import logging
 import discord
+import globs
 from importlib import reload
 
 import commands.eco_commands.eco_common as eco_common
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(globs.LOGLEVEL)
 
 name = 'inventory'
 description = 'View inventory contents.'
@@ -14,7 +15,7 @@ servers = []
 
 
 # reply's with the inventory of the given user (default msg author)
-async def execute(bot, msg, path):
+async def _execute(bot, msg, path):
 	reload(eco_common)
 
 	log.debug(msg.mentions)
@@ -32,7 +33,7 @@ async def execute(bot, msg, path):
 
 	# check if the users inventory is empty
 	if userdata.get('inventory') is None:
-		await msg.channel.send(f'<@!{user}>\'s inventory is empty')
+		await msg.channel.send(f'<@!{msg.author.id}>\'s inventory is empty')
 		log.info('User\'s inventory is empty')
 		return
 
