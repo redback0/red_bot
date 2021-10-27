@@ -35,7 +35,8 @@ async def _execute(bot, msg, path):
 	balances = discord.Embed(title=f'{user.name}\'s Balances')
 
 	balances.add_field(name='Wallet', value=userdata.get('wallet'))
-	balances.add_field(name='Bank', value=userdata.get('bank'))
+	balances.add_field(name='Bank', 
+		value=f"{userdata.get('bank')}/{userdata.get('walletMax')*5}")
 
 
 	await msg.channel.send(embed=balances)
