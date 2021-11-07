@@ -76,6 +76,8 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 						if not guild in cmd_index[key].guilds:
 							return
+					elif cmd_index.cmds[key].permissions == "creator":
+						return
 
 
 					helpmsgdesc += f'{DEF_PREFIX}{key}: '
