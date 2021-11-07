@@ -21,7 +21,7 @@ class eco_command(command):
 		elif self.permissions == "creator" and msg.author.id == CREATOR:
 			await self._execute(bot, msg, path)
 		else:
-			await msg.channel.send(
+			await msg.reply(
 				"Command failed: you don't have the necessary permissions")
 			log.info(
 				f"Command failed: {self.name}, " +

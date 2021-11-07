@@ -39,5 +39,5 @@ async def _execute(bot, msg, path):
 		value=f"{userdata.get('bank')}/{userdata.get('walletMax')*5}")
 
 
-	await msg.channel.send(embed=balances)
+	await msg.reply(embed=balances)
 	log.info(balances)

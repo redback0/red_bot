@@ -33,7 +33,7 @@ async def _execute(bot, msg, path):
 
 	# check if the users inventory is empty
 	if userdata.get('inventory') is None:
-		await msg.channel.send(f'<@!{msg.author.id}>\'s inventory is empty')
+		await msg.reply(f'<@!{msg.author.id}>\'s inventory is empty')
 		log.info('User\'s inventory is empty')
 		return
 

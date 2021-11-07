@@ -23,7 +23,7 @@ async def _execute(bot, msg, path):
 	# make sure there's actually information in the server
 	if data is None:
 		log.info('No data available for this server')
-		await msg.channel.send('No information available')
+		await msg.reply('No information available')
 		return
 
 	worths = {}
@@ -69,7 +69,7 @@ async def _execute(bot, msg, path):
 
 
 	log.debug(top)
-	await msg.channel.send(embed=top)
+	await msg.reply(embed=top)
 
 
 

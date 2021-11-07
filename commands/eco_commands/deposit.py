@@ -24,7 +24,7 @@ async def _execute(bot, msg, path):
 	if not ' ' in msg.content[msg.content.find(' ')+1:]:	
 		
 		log.info('User did not give an amount')
-		await msg.channel.send(
+		await msg.reply(
 			'How much would you like to deposit? (`all` for maximum amount)')
 
 
@@ -50,7 +50,7 @@ async def _execute(bot, msg, path):
 
 		log.info(
 			f'{user} has already deposited today')
-		await msg.channel.send('Sorry, you can only use this once per day')
+		await msg.reply('Sorry, you can only use this once per day')
 		return
 
 	# check if the user is able to store more in their bank
@@ -58,7 +58,7 @@ async def _execute(bot, msg, path):
 		log.info(
 			f'{user}\'s bank is already full: ' +
 			f'{userdata.get("bank")} >= {maxBank}')
-		await msg.channel.send('Your bank is already full')
+		await msg.reply('Your bank is already full')
 		return
 
 	# see if the user has enough in their wallet to deposit
@@ -67,7 +67,7 @@ async def _execute(bot, msg, path):
 		log.info(
 			f'{user}\'s wallet is too empty: {userdata.get("wallet")} ' + 
 			f'<= {minWallet}')
-		await msg.channel.send('Your wallet is too empty for this')
+		await msg.reply('Your wallet is too empty for this')
 		return
 
 
@@ -96,7 +96,7 @@ async def _execute(bot, msg, path):
 			dep = int(args[1])
 		except ValueError:
 			log.info('User entered non integer')
-			await msg.channel.send(
+			await msg.reply(
 				f'{args[1]} is not a number. ' + 
 				f'Please type all, or enter the amount you\'d like to deposit')
 			return
@@ -111,7 +111,7 @@ async def _execute(bot, msg, path):
 	userdata['wallet'] -= dep
 	userdata['bank'] += dep
 
-	await msg.channel.send(f'Deposited {dep} points')
+	await msg.reply(f'Deposited {dep} points')
 
 	# write userdata
 	eco_common.writeFile(path, {str(msg.author.id): userdata})

@@ -22,7 +22,7 @@ async def _execute(bot, msg):
 	path = './commands/eco_commands/guilds/'
 
 	if msg.guild == None:
-		await msg.channel.send(f'Unable to use {PREFIX}eco in DMs')
+		await msg.reply(f'Unable to use {PREFIX}eco in DMs')
 		log.info('Attempted to use .eco in DMs') 
 		return
 	else:
@@ -31,7 +31,7 @@ async def _execute(bot, msg):
 	log.debug(path)
 
 	if not ' ' in msg.content:
-		await msg.channel.send(f'Do `{PREFIX}eco help` for available commands')
+		await msg.reply(f'Do `{PREFIX}eco help` for available commands')
 		log.info('No subcommand given')
 		return
 
@@ -86,7 +86,7 @@ async def _execute(bot, msg):
 
 
 		log.info(helpmsg)
-		await msg.channel.send(embed=helpmsg)
+		await msg.reply(embed=helpmsg)
 
 
 		return
@@ -102,7 +102,7 @@ async def _execute(bot, msg):
 			await ecocmd_index.ecocmds[subcmd].execute(bot, msg, path)
 			log.info(f'Sub command executed: {subcmd}')
 		else:
-			await msg.channel.send(
+			await msg.reply(
 				'Invalid command; Do .eco help for available commands')
 			log.info(f'Invalid sub command: {subcmd}')
 			

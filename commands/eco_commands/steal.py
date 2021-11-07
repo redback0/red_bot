@@ -24,12 +24,12 @@ async def _execute(bot, msg, path):
 	reload(eco_common)
 
 	if msg.mentions == []:
-		await msg.channel.send(
+		await msg.reply(
 			'Who are you stealing from? usage: `.eco steal <@user>`')
 		log.info('no user to steal from')
 		return
 	elif msg.mentions[0] == msg.author:
-		await msg.channel.send('You can\'t steal from yourself!')
+		await msg.reply('You can\'t steal from yourself!')
 		log.info('user tried to steal from themself')
 		return
 
@@ -56,7 +56,7 @@ async def _execute(bot, msg, path):
 
 		if stealeedata['wallet'] < MIN_WALLET:
 			log.info('not enough in stealee\'s wallet')
-			await msg.channel.send('Try stealing from someone who has points')
+			await msg.reply('Try stealing from someone who has points')
 			return
 		elif stealerdata['wallet'] < MIN_WALLET / 2:
 			log.info('stealer wallet < 1000, setting succChance to 70%')	
@@ -97,7 +97,7 @@ async def _execute(bot, msg, path):
 
 
 			log.info(f'Steal success: stealing {steal} points')
-			await msg.channel.send(
+			await msg.reply(
 				f'success, stealing {steal} points from <@!{msg.mentions[0].id}>')
 
 
@@ -128,7 +128,7 @@ async def _execute(bot, msg, path):
 
 
 			log.info(f'Steal fail: stealing -{steal} points')
-			await msg.channel.send(
+			await msg.reply(
 				'oops, got caught, you gave ' + 
 				f'{steal} points to <@!{msg.mentions[0].id}>')
 
@@ -136,7 +136,7 @@ async def _execute(bot, msg, path):
 		elif result < 90:
 
 			log.info(f'Steal failed: Nothing happened')
-			await msg.channel.send(f'You broke in, but forgot to steal anything')
+			await msg.reply(f'You broke in, but forgot to steal anything')
 
 		# 5% chance for bonus
 		else:
@@ -145,7 +145,7 @@ async def _execute(bot, msg, path):
 			# once .eco inv is implemented, this will actually do 
 			# something interesting
 			log.warning('BONUS UNIMPLEMENTED')
-			await msg.channel.send('Bonus: Unimplemented')
+			await msg.reply('Bonus: Unimplemented')
 			return
 
 
@@ -159,7 +159,7 @@ async def _execute(bot, msg, path):
 		minutes = 60 - math.floor((now - (datetime.datetime.fromisoformat(
 			stealerdata["lastSteal"]))).seconds / 60)
 		log.info(f'Steal failed: Hasn\'t been an hour, {minutes} minutes left')
-		await msg.channel.send(f'Oops! You have to wait another {minutes} minutes')
+		await msg.reply(f'Oops! You have to wait another {minutes} minutes')
 
 
 def _percent():

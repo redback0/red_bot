@@ -33,7 +33,7 @@ async def _execute(bot, msg, path):
 		userdata['lastDaily'] = today.isoformat()
 		userdata.update({'wallet': userdata.get('wallet', 0) + 500})
 		
-		await msg.channel.send(f'You got 500 points! Your total is now {userdata["wallet"]}')
+		await msg.reply(f'You got 500 points! Your total is now {userdata["wallet"]}')
 
 		log.info(f'Gave {msg.author.name}#{msg.author.discriminator} 500 points')
 
@@ -41,5 +41,5 @@ async def _execute(bot, msg, path):
 		eco_common.writeFile(path, {str(msg.author.id): userdata})
 
 	else:
-		await msg.channel.send('Oops! You\'ve already done this today, try again tomorrow!')
+		await msg.reply('Oops! You\'ve already done this today, try again tomorrow!')
 		log.info(f'{msg.author.name}#{msg.author.discriminator} has already claimed they\'re points')
