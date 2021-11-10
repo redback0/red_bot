@@ -17,21 +17,21 @@ async def execute(bot, msg):
 				'natey' in msgtrim or
 				'208038162180734976' in msgtrim or
 				'851816132801331260' in msgtrim):
-			await msg.channel.send(f'{msgtrim} is -100% cringe')
-			await msg.channel.send(f'<@!{msg.author.id}> is 100% cringe')
+			await msg.reply(f'{msgtrim} is -100% cringe')
+			await msg.reply(f'{msg.author.mention} is 100% cringe')
 		elif 'red__' in msgtrim:
-			await msg.channel.send("who's that?")
-			await msg.channel.send(f'also <@!{msg.author.id}> is 100% cringe')
+			await msg.reply("who's that?")
+			await msg.reply(f'also {msg.author.mention} is 100% cringe')
 		else:
 			if msg.author.id == 208038162180734976:
 				chance = 100
 			else:
 				chance = random.randrange(101)
 
-			await msg.channel.send(f'{msgtrim} is {chance}% cringe')
+			await msg.reply(f'{msgtrim} is {chance}% cringe')
 			log.info(f'cringed text: {msgtrim}')
 
 
 	else:
-		await msg.channel.send(f'<@!{msg.author.id}> is 100% cringe')
+		await msg.reply(f'{msg.author.mention} is 100% cringe')
 		log.info('Attempted to cringe, but was missing text')

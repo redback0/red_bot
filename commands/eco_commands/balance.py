@@ -1,7 +1,6 @@
 import logging
 import globs
 import discord
-from importlib import reload
 
 import commands.eco_commands.eco_common as eco_common
 
@@ -16,11 +15,8 @@ servers = []
 
 # check the balance of a users wallet and bank
 async def execute(bot, msg, path):
-	reload(eco_common)
 
 	log.debug(msg.mentions)
-
-
 
 	if msg.mentions == []:
 		user = msg.author
