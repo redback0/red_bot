@@ -61,7 +61,7 @@ async def execute(bot, msg):
 
 		for key in ecocmd_index.ecocmds.keys():
 			
-			if ecocmd_index.ecocmds[key].check_perms():
+			if ecocmd_index.ecocmds[key].check_perms(msg):
 
 				helpmsgdesc += f'{PREFIX}eco {key}: '
 
