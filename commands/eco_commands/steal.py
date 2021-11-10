@@ -20,7 +20,7 @@ MIN_WALLET = 2000
 
 
 # steal points from another player
-async def _execute(bot, msg, path):
+async def execute(bot, msg, path):
 	reload(eco_common)
 
 	if msg.mentions == []:

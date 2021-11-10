@@ -15,7 +15,7 @@ servers = []
 
 
 # the leaderboard command
-async def _execute(bot, msg, path):
+async def execute(bot, msg, path):
 	reload(eco_common)
 
 	data = eco_common.readAll(path)

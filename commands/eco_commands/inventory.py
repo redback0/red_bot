@@ -15,7 +15,7 @@ servers = []
 
 
 # reply's with the inventory of the given user (default msg author)
-async def _execute(bot, msg, path):
+async def execute(bot, msg, path):
 	reload(eco_common)
 
 	log.debug(msg.mentions)

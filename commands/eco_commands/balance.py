@@ -1,4 +1,3 @@
-import datetime
 import logging
 import globs
 import discord
@@ -16,7 +15,7 @@ servers = []
 
 
 # check the balance of a users wallet and bank
-async def _execute(bot, msg, path):
+async def execute(bot, msg, path):
 	reload(eco_common)
 
 	log.debug(msg.mentions)
@@ -32,11 +31,17 @@ async def _execute(bot, msg, path):
 	log.debug(userdata)
 
 
+	if userdata.get('walletMax') is not None:
+		maxBank = userdata['walletMax']*5
+	else:
+		maxBank = userdata['wallet']*5
+
+
 	balances = discord.Embed(title=f'{user.name}\'s Balances')
 
 	balances.add_field(name='Wallet', value=userdata.get('wallet'))
 	balances.add_field(name='Bank', 
-		value=f"{userdata.get('bank')}/{userdata.get('walletMax')*5}")
+		value=f"{userdata.get('bank')}/{maxBank}")
 
 
 	await msg.reply(embed=balances)

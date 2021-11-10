@@ -1,4 +1,5 @@
 from importlib import import_module
+from typing import overload
 from commands.index import command
 import logging
 import globs
@@ -11,17 +12,21 @@ log.setLevel(globs.LOGLEVEL)
 
 path = 'commands.eco_commands.'
 
-
+"""
+eco_command:
+	An subclass of command designed specifically for .eco commands
+"""
 class eco_command(command):
-
+	
+	"""
+	Execute the command if permissions are met
+	"""
 	async def execute(self, bot, msg, path):
 
-		if self.permissions == "none":
-			await self._execute(bot, msg, path)
-		elif self.permissions == "creator" and msg.author.id == CREATOR:
+		if self.check_perms(msg):
 			await self._execute(bot, msg, path)
 		else:
-			await msg.reply(
+			await msg.channel.send(
 				"Command failed: you don't have the necessary permissions")
 			log.info(
 				f"Command failed: {self.name}, " +
@@ -35,7 +40,8 @@ ecocmds = {
 	'steal': eco_command(import_module(f'{path}steal')),
 	'deposit': eco_command(import_module(f'{path}deposit')),
 	'inventory': eco_command(import_module(f'{path}inventory')),
-	'top': eco_command(import_module(f'{path}top'))
+	'top': eco_command(import_module(f'{path}top')),
+	'give': eco_command(import_module(f'{path}give'))
 }
 
 # aliases

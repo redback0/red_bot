@@ -13,43 +13,109 @@ log.setLevel(globs.LOGLEVEL)
 path = 'commands.'
 
 
-
+"""
+command:
+	A container for a command
+"""
 class command():
-	"""
-	command:
-		A container for a command
-	"""
+	
 	def __init__(self, module):
 		# set garanteed values
-		self.module = module
-		self._execute = module._execute
-		self.name = module.name
-		self.description = module.description
+		self._execute = module.execute
+		self._name = module.name
+		self._description = module.description
 
 		# set other values!
 		try:
-			self.permissions = module.permissions
-		except:
-			self.permissions = "none"
+			self._permissions = module.permissions
 
-		if self.permissions == "guilds":
-			try:
-				self.guilds = module.guilds
-			except:
-				self.guilds = []
+			if self.permissions == "guilds":
+				try:
+					self._guilds = module.guilds
+			
+				except:
+					self._guilds = None
+
+			elif self.permissions == "roles":
+				try:
+					self._roles = module.guilds
+			
+				except:
+					self._roles = None
+		
+		except:
+			self._permissions = "none"
+			
+
+		
+
+	@property
+	# name: the name of your command e.g. this.py would have the name "this"
+	def name(self):
+		return self._name
+
+	@property
+	# description: a short description of the command
+	def description(self):
+		return self._description
+
+	@property
+	# permissions: what permission level is required to run the command, can be
+	# "guilds", "roles", or "creator"
+	def permissions(self):
+		return self._permissions
+
+	# guilds: what guilds the command can be used in: requires permissions
+	# to be set to "guilds"
+	@property
+	def guilds(self):
+		return self._guilds
+
+	# roles: what roles are allowed to use the command: requires permissions
+	# to be set to "roles"
+	@property
+	def roles(self):
+		return self._roles
+		
+
+	"""
+	Checks whether the user has permission to run the command
+	"""
+	def check_perms(self, msg):
+		
+		if self.permissions == "none":
+			return True
+		
+		elif msg.author.id == CREATOR:
+			return True
+
+		elif self.permissions == "guilds":
+			if msg.guild == None:
+				guild = None
+		
+			else: 
+				guild = msg.guild.id
+		
+		
+			log.debug(f"guild ID: {guild}")
+
+			if guild in self.guilds:
+				return True
 
 		elif self.permissions == "roles":
-			try:
-				self.roles = module.guilds
-			except:
-				self.roles = []
+			# roles permission is not yet implemented
+			pass
+				
+		return False
 
-
+	"""
+	Execute the command if permissions are met
+	"""
 	async def execute(self, bot, msg):
-
-		if self.permissions == "none":
-			await self._execute(bot, msg)
-		elif self.permissions == "creator" and msg.author.id == CREATOR:
+		log.info(f"checking perms for command {self.name}")
+		
+		# if check_perms is true, excute command
+		if self.check_perms(msg):
 			await self._execute(bot, msg)
 		else:
 			await msg.channel.send(

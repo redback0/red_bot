@@ -64,31 +64,26 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 				log.info('Generating help message')
 				helpmsgdesc = f'{DEF_PREFIX}help: Displays this list\n';
 
+				if msg.guild == None:
+					guild = None
+				else: 
+					guild = msg.guild.id
+				log.debug(f"guild ID: {guild}")
+
 
 				for key in cmd_index.cmds.keys():
 					
-					if cmd_index.cmds[key].permissions == "guilds":
-						if msg.guild == None:
-							guild = None
-						else: 
-							guild = msg.guild.id
-						log.debug(f"guild ID: {guild}")
+					if cmd_index.cmds[key].check_perms(msg):
+						helpmsgdesc += f"{DEF_PREFIX}{key}: "
 
-						if not guild in cmd_index[key].guilds:
-							return
-					elif cmd_index.cmds[key].permissions == "creator":
-						return
+						if not cmd_index.cmds[key].name == key:
+							helpmsgdesc += f'Alias for {cmd_index.cmds[key].name}\n'
+						else:
+							helpmsgdesc += f'{cmd_index.cmds[key].description}\n'
 
 
-					helpmsgdesc += f'{DEF_PREFIX}{key}: '
-
-					if not cmd_index.cmds[key].name == key:
-						helpmsgdesc += f'Alias for {cmd_index.cmds[key].name}\n'
-					else:
-						helpmsgdesc += f'{cmd_index.cmds[key].description}\n'
-
-
-				helpmsg = discord.Embed(title='Commands', description=helpmsgdesc)
+				helpmsg = discord.Embed(title="Commands", 
+					description=helpmsgdesc)
 
 
 				log.info(helpmsg)
@@ -106,9 +101,9 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 					log.debug(cmd_index.cmds[command])
 					# run the command
 					await cmd_index.cmds[command].execute(self, msg)
-					log.info(f'Command executed: {command}')
+					log.info(f"Command executed: {command}")
 				else:
-					log.info(f'Invalid command {command}')
+					log.info(f"Invalid command {command}")
 
 			except Exception as err:
 				

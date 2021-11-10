@@ -17,7 +17,7 @@ description = f'A set of economy commands. {PREFIX}eco help for more'
 
 
 
-async def _execute(bot, msg):
+async def execute(bot, msg):
 
 	path = './commands/eco_commands/guilds/'
 
@@ -61,25 +61,15 @@ async def _execute(bot, msg):
 
 		for key in ecocmd_index.ecocmds.keys():
 			
-			if ecocmd_index.ecocmds[key].permissions == "guilds":
+			if ecocmd_index.ecocmds[key].check_perms():
 
-				if msg.guild == None: 
-					guild = None
-				else: 
-					guild = msg.guild.id
-				log.debug(f"guild ID: {guild}")
+				helpmsgdesc += f'{PREFIX}eco {key}: '
 
-				if not guild in ecocmd_index.ecocmds[key].guilds:
-					return
-
-
-			helpmsgdesc += f'{PREFIX}eco {key}: '
-
-			# if the subcmd points to another subcmd, call it an alias
-			if not ecocmd_index.ecocmds[key].name == key:
-				helpmsgdesc += f'Alias for {ecocmd_index.ecocmds[key].name}\n'
-			else:
-				helpmsgdesc += f'{ecocmd_index.ecocmds[key].description}\n'
+				# if the subcmd points to another subcmd, call it an alias
+				if not ecocmd_index.ecocmds[key].name == key:
+					helpmsgdesc += f'Alias for {ecocmd_index.ecocmds[key].name}\n'
+				else:
+					helpmsgdesc += f'{ecocmd_index.ecocmds[key].description}\n'
 
 
 		helpmsg = discord.Embed(title='Eco Commands', description=helpmsgdesc)

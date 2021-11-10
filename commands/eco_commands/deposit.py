@@ -1,7 +1,6 @@
 import datetime
 import logging
 import globs
-from importlib import reload
 
 import commands.eco_commands.eco_common as eco_common
 
@@ -18,7 +17,7 @@ bankMaxMul = 5
 walletMinMul = 0.1
 
 # give a user 500 points, usable once per day
-async def _execute(bot, msg, path):
+async def execute(bot, msg, path):
 
 	# check if there's a argument
 	if not ' ' in msg.content[msg.content.find(' ')+1:]:	
@@ -26,9 +25,8 @@ async def _execute(bot, msg, path):
 		log.info('User did not give an amount')
 		await msg.reply(
 			'How much would you like to deposit? (`all` for maximum amount)')
+		return
 
-
-	reload(eco_common)
 
 	userdata = eco_common.readFile(path, str(msg.author.id))
 	log.debug(userdata)

@@ -9,6 +9,6 @@ name = 'test'
 description = 'a test command'
 permissions = "creator"
 
-async def _execute(bot, msg):
+async def execute(bot, msg):
 	await msg.channel.send('Test successful')
 	log.info('sent message: Test successful')

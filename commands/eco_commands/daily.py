@@ -15,7 +15,7 @@ servers = []
 
 
 # give a user 500 points, usable once per day
-async def _execute(bot, msg, path):
+async def execute(bot, msg, path):
 	reload(eco_common)
 
 	userdata = eco_common.readFile(path, str(msg.author.id))

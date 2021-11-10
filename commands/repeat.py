@@ -9,7 +9,7 @@ name = 'repeat'
 description = "Send a message!"
 
 # repeats text
-async def _execute(bot, msg):
+async def execute(bot, msg):
 
 	if msg.author.id == 208038162180734976:
 		if msg.content.find(' ') > 0:

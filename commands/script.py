@@ -15,13 +15,14 @@ permissions = "creator"
 path = "commands.execute_scripts."
 
 
-async def _execute(bot, msg):
+async def execute(bot, msg):
 
 	if not ' ' in msg.content:
 		await msg.channel.send(
 			'Runs abitrary scripts, give a script as an argument')
 		log.info('No subcommand given')
 		return
+	
 
 	iCMDEnd = msg.content.find(' ')+1
 	iScriptEnd = msg.content[iCMDEnd:].find(' ')
@@ -44,11 +45,12 @@ async def _execute(bot, msg):
 			module = import_module(f'{path}{script}')
 			result = module.main(bot)
 
-			await msg.channel.send(result)
+			await msg.reply(result)
 			log.info(result)
 		else:
 			await msg.channel.send("File does not exist")
-			log.info(f"Failed to execute script: {script}, file does not exist")
+			log.info(
+				f"Failed to execute script: {script}, file does not exist")
 
 	except Exception as err:
 

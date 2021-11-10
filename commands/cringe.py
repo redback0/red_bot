@@ -9,7 +9,7 @@ log.setLevel(globs.LOGLEVEL)
 name = 'cringe'
 description = "Tests the cringe level of @user"
 
-async def _execute(bot, msg):
+async def execute(bot, msg):
 	if msg.content.find(' ') > 0:
 		msgtrim = msg.content[msg.content.find(' ')+1:]
 

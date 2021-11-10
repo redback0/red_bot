@@ -14,7 +14,7 @@ name = 'server'
 description = 'Pings minecraft servers'
 
 
-async def _execute(bot, msg):
+async def execute(bot, msg):
 
 	# create args list, a list of all words after the command
 	# eg:  msg.content = ".server ttpg.xyz hey"; args = ["ttpg.xyz", "hey"]
