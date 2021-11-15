@@ -48,7 +48,7 @@ async def execute(bot, msg, path):
 	# when it's not none, attempt to convert it to datetime and add 1 hour
 	if lastSteal is None:
 		lastSteal = datetime.min
-	
+
 	log.debug(f"lastSteal: {lastSteal}, now: {now.isoformat()}")
 
 
@@ -68,20 +68,20 @@ async def execute(bot, msg, path):
 	stealeeData = UserData.getUserData(path, msg.mentions[0])
 	log.debug(f'Stealee: {stealeeData}')
 
-	
+
 	if stealeeData.wallet < MIN_WALLET:
 		log.info(f"not enough in stealee\'s wallet ({stealeeData.wallet})")
 		await msg.reply('Try stealing from someone who has points')
 		return
-	
+
 	elif stealerData.wallet < MIN_WALLET / 2:
 		log.info('stealer wallet < 1000, setting succWeight to 60')
 		succWeight = 100
-	
+
 	else:
 		log.info('stealer wallet > 1000, setting succWeight to 40')
-		succWeight = 50
-	
+		succWeight = 60
+
 
 	# get a number to decide if we succeed, fail, do nothing or bonus
 	result = random.randrange(succWeight + FAIL_WEIGHT +
@@ -104,7 +104,7 @@ async def execute(bot, msg, path):
 		else:
 			steal = int(stealerData.wallet * percent)
 			log.debug(
-				f'using stealer wallet: ' + 
+				f'using stealer wallet: ' +
 				f'{stealerData.wallet} * {percent} = {steal}')
 
 
@@ -114,7 +114,7 @@ async def execute(bot, msg, path):
 
 
 		log.info(f'Steal success: stealing {steal} points')
-		await msg.reply(f"success, stealing {steal} " + 
+		await msg.reply(f"success, stealing {steal} " +
 			f"points from {stealeeData.user.mention}")
 
 	# chance to give money
@@ -135,7 +135,7 @@ async def execute(bot, msg, path):
 		else:
 			steal = int(stealerData.wallet * percent)
 			log.debug(
-				f'using stealer wallet: ' + 
+				f'using stealer wallet: ' +
 				f'{stealerData.wallet} * {percent} = {steal}')
 
 
@@ -145,7 +145,7 @@ async def execute(bot, msg, path):
 
 
 		log.info(f'Steal fail: stealing -{steal} points')
-		await msg.reply('oops, got caught, you gave ' + 
+		await msg.reply('oops, got caught, you gave ' +
 			f"{steal} points to {stealeeData.user.mention}")
 
 	# chance to do nothing
@@ -157,9 +157,9 @@ async def execute(bot, msg, path):
 	# chance for bonus
 	else:
 		# something that's uncommon but increadibly undesirable
-		# shouldn't change wallet, and shouldn't effect things 
+		# shouldn't change wallet, and shouldn't effect things
 		# with a cooldown
-		# once .eco inv is implemented, this will actually do 
+		# once .eco inv is implemented, this will actually do
 		# something interesting
 		log.warning('BONUS UNIMPLEMENTED')
 		await msg.reply('Bonus: Unimplemented')
