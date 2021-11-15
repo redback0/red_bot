@@ -41,7 +41,7 @@ ecocmds = {
 	'inventory': EcoCommand(import_module(f'{path}inventory')),
 	'top': EcoCommand(import_module(f'{path}top')),
 	'give': EcoCommand(import_module(f'{path}give')),
-	'withdraw': EcoCommand(import_module(f'{path}withdraw'))
+#	'withdraw': EcoCommand(import_module(f'{path}withdraw'))
 }
 
 # aliases
@@ -50,5 +50,5 @@ ecocmds.update({
 	'rob': ecocmds['steal'],
 	'dep': ecocmds['deposit'],
 	'inv': ecocmds['inventory'],
-	'wd': ecocmds['withdraw']
+#	'wd': ecocmds['withdraw']
 })
