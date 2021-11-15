@@ -1,6 +1,5 @@
 from importlib import import_module
-from typing import overload
-from commands.index import command
+from commands.index import Command
 import logging
 import globs
 
@@ -16,8 +15,8 @@ path = 'commands.eco_commands.'
 eco_command:
 	An subclass of command designed specifically for .eco commands
 """
-class eco_command(command):
-	
+class EcoCommand(Command):
+
 	"""
 	Execute the command if permissions are met
 	"""
@@ -35,13 +34,14 @@ class eco_command(command):
 
 
 ecocmds = {
-	'daily': eco_command(import_module(f'{path}daily')),
-	'balance': eco_command(import_module(f'{path}balance')),
-	'steal': eco_command(import_module(f'{path}steal')),
-	'deposit': eco_command(import_module(f'{path}deposit')),
-	'inventory': eco_command(import_module(f'{path}inventory')),
-	'top': eco_command(import_module(f'{path}top')),
-	'give': eco_command(import_module(f'{path}give'))
+	'daily': EcoCommand(import_module(f'{path}daily')),
+	'balance': EcoCommand(import_module(f'{path}balance')),
+	'steal': EcoCommand(import_module(f'{path}steal')),
+	'deposit': EcoCommand(import_module(f'{path}deposit')),
+	'inventory': EcoCommand(import_module(f'{path}inventory')),
+	'top': EcoCommand(import_module(f'{path}top')),
+	'give': EcoCommand(import_module(f'{path}give')),
+	'withdraw': EcoCommand(import_module(f'{path}withdraw'))
 }
 
 # aliases
@@ -49,5 +49,6 @@ ecocmds.update({
 	'bal': ecocmds['balance'],
 	'rob': ecocmds['steal'],
 	'dep': ecocmds['deposit'],
-	'inv': ecocmds['inventory']
+	'inv': ecocmds['inventory'],
+	'wd': ecocmds['withdraw']
 })

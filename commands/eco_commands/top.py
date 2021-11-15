@@ -3,7 +3,7 @@ import globs
 from importlib import reload
 import discord
 
-import commands.eco_commands.eco_common as eco_common
+from commands.eco_commands.eco_common import *
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -16,12 +16,11 @@ servers = []
 
 # the leaderboard command
 async def execute(bot, msg, path):
-	reload(eco_common)
 
-	data = eco_common.readAll(path)
+	userDatas = UserData.getAllFromGuild(bot, path)
 
 	# make sure there's actually information in the server
-	if data is None:
+	if userDatas == []:
 		log.info('No data available for this server')
 		await msg.reply('No information available')
 		return
@@ -31,11 +30,11 @@ async def execute(bot, msg, path):
 
 
 	# calculate total value of each user
-	for userID in data.keys():
-		log.debug(f'adding user: {bot.get_user(int(userID))}')
+	for userData in userDatas:
+		log.debug(f'adding user: {userData.user.name}')
 		# worth = bank + wallet // in future may include some
-		worth = int(data[userID]['wallet'] + data[userID]['bank'])
-		worths[userID] = worth
+		worth = int(userData.wallet + userData.bank)
+		worths[userData.user] = worth
 
 	log.debug(worths)
 
@@ -45,24 +44,24 @@ async def execute(bot, msg, path):
 	foundAuthor = False
 
 	# run through users in order of worth (most to least)
-	for userID in sorted(worths, key=worths.get, reverse=True):
-		log.debug(f'{bot.get_user(int(userID))}: {worths[userID]}')
+	for user in sorted(worths, key=worths.get, reverse=True):
+		log.debug(f'{user}: {worths[user]}')
 		i += 1
 
 		# check if the userID is the msg author; allow exit if true
-		if not foundAuthor and msg.author.id == userID:
+		if not foundAuthor and msg.author == user:
 			foundAuthor = True
 
 		# place the top 10 users
 		if i <= 10:
-			topDes += f'\n{i}. {worths[userID]}, {bot.get_user(int(userID)).name}'
+			topDes += f'\n{i}. {worths[user]}, {user.name}'
 
 			if foundAuthor and i == 10:
 				break
 
 		# place the author if not in top 10
 		elif foundAuthor:
-			topDes += f'\n\n{i}. {worths[userID]}, {bot.get_user(int(userID)).name}'
+			topDes += f'\n\n{i}. {worths[user]}, {user.name}'
 
 
 	top = discord.Embed(title='Leaderboard', description=topDes)

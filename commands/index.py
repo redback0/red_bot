@@ -1,4 +1,3 @@
-import os
 from importlib import import_module
 import logging
 import globs
@@ -17,8 +16,8 @@ path = 'commands.'
 command:
 	A container for a command
 """
-class command():
-	
+class Command():
+
 	def __init__(self, module):
 		# set garanteed values
 		self._execute = module.execute
@@ -32,22 +31,22 @@ class command():
 			if self.permissions == "guilds":
 				try:
 					self._guilds = module.guilds
-			
+
 				except:
 					self._guilds = None
 
 			elif self.permissions == "roles":
 				try:
 					self._roles = module.guilds
-			
+
 				except:
 					self._roles = None
-		
+
 		except:
 			self._permissions = "none"
-			
 
-		
+
+
 
 	@property
 	# name: the name of your command e.g. this.py would have the name "this"
@@ -76,27 +75,27 @@ class command():
 	@property
 	def roles(self):
 		return self._roles
-		
+
 
 	"""
 	Checks whether the user has permission to run the command
 	"""
 	def check_perms(self, msg):
-		
+
 		if self.permissions == "none":
 			return True
-		
+
 		elif msg.author.id == CREATOR:
 			return True
 
 		elif self.permissions == "guilds":
 			if msg.guild == None:
 				guild = None
-		
-			else: 
+
+			else:
 				guild = msg.guild.id
-		
-		
+
+
 			log.debug(f"guild ID: {guild}")
 
 			if guild in self.guilds:
@@ -105,7 +104,7 @@ class command():
 		elif self.permissions == "roles":
 			# roles permission is not yet implemented
 			pass
-				
+
 		return False
 
 	"""
@@ -113,7 +112,7 @@ class command():
 	"""
 	async def execute(self, bot, msg):
 		log.info(f"checking perms for command {self.name}")
-		
+
 		# if check_perms is true, excute command
 		if self.check_perms(msg):
 			await self._execute(bot, msg)
@@ -128,11 +127,11 @@ class command():
 
 # dictionary that associates a string with a command instance
 cmds = {
-	'test': command(import_module(f'{path}test')),
-	'repeat': command(import_module(f'{path}repeat')),
-	'cringe': command(import_module(f'{path}cringe')),
-	'server': command(import_module(f'{path}server')),
-	'eco': command(import_module(f'{path}eco')),
-	'script': command(import_module(f'{path}script'))
+	'test': Command(import_module(f'{path}test')),
+	'repeat': Command(import_module(f'{path}repeat')),
+	'cringe': Command(import_module(f'{path}cringe')),
+	'server': Command(import_module(f'{path}server')),
+	'eco': Command(import_module(f'{path}eco')),
+	'script': Command(import_module(f'{path}script'))
 }
 

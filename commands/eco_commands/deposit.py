@@ -1,8 +1,8 @@
-import datetime
+from datetime import *
 import logging
 import globs
 
-import commands.eco_commands.eco_common as eco_common
+from commands.eco_commands.eco_common import *
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -28,23 +28,22 @@ async def execute(bot, msg, path):
 		return
 
 
-	userdata = eco_common.readFile(path, str(msg.author.id))
-	log.debug(userdata)
+	userData = UserData.getUserData(path, msg.author)
+	log.debug(userData)
 
 	user = msg.author.name + "#" + msg.author.discriminator
 
 
-	today = datetime.date.today()
-	maxBank = userdata.get('walletMax') * bankMaxMul
-	minWallet = userdata.get('walletMax') * walletMinMul
+	today = date.today()
+	maxBank = userData.walletMax * bankMaxMul
+	minWallet = userData.walletMax * walletMinMul
 
 	if minWallet < 2000:
 		minWallet = 2000
 
 
 	# check if the user has already done this today
-	if not datetime.date.fromisoformat(
-			userdata.get('lastDeposit', datetime.date.min.isoformat())) < today:
+	if not userData.lastDeposit < today:
 
 		log.info(
 			f'{user} has already deposited today')
@@ -52,31 +51,31 @@ async def execute(bot, msg, path):
 		return
 
 	# check if the user is able to store more in their bank
-	elif userdata.get('bank') >= maxBank:
+	elif userData.bank >= maxBank:
 		log.info(
 			f'{user}\'s bank is already full: ' +
-			f'{userdata.get("bank")} >= {maxBank}')
+			f'{userData.bank} >= {maxBank}')
 		await msg.reply('Your bank is already full')
 		return
 
 	# see if the user has enough in their wallet to deposit
-	elif (userdata.get('wallet') <= minWallet or 
-			userdata.get('wallet') <= 2000):
+	elif (userData.wallet <= minWallet or 
+			userData.wallet <= 2000):
 		log.info(
-			f'{user}\'s wallet is too empty: {userdata.get("wallet")} ' + 
+			f'{user}\'s wallet is too empty: {userData.wallet} ' + 
 			f'<= {minWallet}')
 		await msg.reply('Your wallet is too empty for this')
 		return
 
 
-	maxDep = int(userdata.get('wallet') - minWallet)
+	maxDep = int(userData.wallet - minWallet)
 
 
-	if maxDep < userdata.get('wallet') - minWallet:
-		maxDep = userdata.get('wallet') - minWallet
+	if maxDep < userData.wallet - minWallet:
+		maxDep = userData.wallet - minWallet
 
-	if maxDep > maxBank - userdata.get('bank'):
-		maxDep = maxBank - userdata.get('bank')
+	if maxDep > maxBank - userData.bank:
+		maxDep = maxBank - userData.bank
 
 	
 
@@ -105,11 +104,11 @@ async def execute(bot, msg, path):
 	log.info(f'Depositing {dep} points')
 
 	# set all userdata values
-	userdata['lastDeposit'] = today.isoformat()
-	userdata['wallet'] -= dep
-	userdata['bank'] += dep
+	userData.lastDeposit = today
+	userData.wallet -= dep
+	userData.bank += dep
 
 	await msg.reply(f'Deposited {dep} points')
 
 	# write userdata
-	eco_common.writeFile(path, {str(msg.author.id): userdata})
+	userData.saveUserData(path)

@@ -1,5 +1,4 @@
 import os
-import sys
 import traceback
 import logging
 import discord
@@ -15,7 +14,6 @@ import commands.index as cmd_index
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
-
 
 
 logging.basicConfig()
@@ -60,53 +58,54 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 			# help: Displays all available commands
 			if command == 'help':
-				
 				log.info('Generating help message')
 				helpmsgdesc = f'{DEF_PREFIX}help: Displays this list\n';
 
 				if msg.guild == None:
 					guild = None
-				else: 
+
+				else:
 					guild = msg.guild.id
+
 				log.debug(f"guild ID: {guild}")
 
 
 				for key in cmd_index.cmds.keys():
-					
+
 					if cmd_index.cmds[key].check_perms(msg):
 						helpmsgdesc += f"{DEF_PREFIX}{key}: "
 
 						if not cmd_index.cmds[key].name == key:
 							helpmsgdesc += f'Alias for {cmd_index.cmds[key].name}\n'
+
 						else:
 							helpmsgdesc += f'{cmd_index.cmds[key].description}\n'
 
 
-				helpmsg = discord.Embed(title="Commands", 
+				helpmsg = discord.Embed(title="Commands",
 					description=helpmsgdesc)
-
 
 				log.info(helpmsg)
 				await msg.channel.send(embed=helpmsg)
 
-
 				return
 
-			
+
 			# regular commands
 			try:
 
 				if cmd_index.cmds.get(command, False):
-
 					log.debug(cmd_index.cmds[command])
-					# run the command
+
+					# forward to the next step (in commands/index.py)
 					await cmd_index.cmds[command].execute(self, msg)
 					log.info(f"Command executed: {command}")
+
 				else:
 					log.info(f"Invalid command {command}")
 
 			except Exception as err:
-				
+
 				log.warning(f"Command {command} had a problem:")
 				log.warning(traceback.format_exc())
 				log.warning(err)

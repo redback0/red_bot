@@ -2,7 +2,7 @@ import logging
 import globs
 import discord
 
-import commands.eco_commands.eco_common as eco_common
+from commands.eco_commands.eco_common import *
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -23,21 +23,16 @@ async def execute(bot, msg, path):
 	else:
 		user = msg.mentions[0]
 
-	userdata = eco_common.readFile(path, str(user.id))
+	userdata = UserData.getUserData(path, user)
 	log.debug(userdata)
 
-
-	if userdata.get('walletMax') is not None:
-		maxBank = userdata['walletMax']*5
-	else:
-		maxBank = userdata['wallet']*5
-
+	# find the max bank
+	maxBank = userdata.walletMax * 5
 
 	balances = discord.Embed(title=f'{user.name}\'s Balances')
 
-	balances.add_field(name='Wallet', value=userdata.get('wallet'))
-	balances.add_field(name='Bank', 
-		value=f"{userdata.get('bank')}/{maxBank}")
+	balances.add_field(name='Wallet', value=userdata.wallet)
+	balances.add_field(name='Bank', value=f"{userdata.bank}/{maxBank}")
 
 
 	await msg.reply(embed=balances)

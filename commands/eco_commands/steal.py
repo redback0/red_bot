@@ -1,27 +1,29 @@
-import datetime
+from datetime import *
 import random
 import math
 import logging
 import globs
-from importlib import reload
 
-import commands.eco_commands.eco_common as eco_common
+from commands.eco_commands.eco_common import *
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(globs.LOGLEVEL)
 
-name = 'steal'
-description = 'Steal points from another player'
+name = "steal"
+description = "Steal points from another player"
 servers = []
 
 
 MIN_WALLET = 2000
 
+FAIL_WEIGHT = 30
+NOTHING_WEIGHT = 5
+BONUS_WEIGHT = 0
+
 
 # steal points from another player
 async def execute(bot, msg, path):
-	reload(eco_common)
 
 	if msg.mentions == []:
 		await msg.reply(
@@ -34,137 +36,145 @@ async def execute(bot, msg, path):
 		return
 
 
-	stealerdata = eco_common.readFile(path, str(msg.author.id))
-	log.debug(f'stealer: {stealerdata}')
+	# get data for the user stealing
+	stealerData = UserData.getUserData(path, msg.author)
+	log.debug(f'stealer: {stealerData}')
 
-	now = datetime.datetime.today()
+	# set lastSteal and now
+	now = datetime.today()
+	lastSteal = stealerData.lastSteal
+
+	# when lastSteal is None, set lastSteal to the earliest possible time
+	# when it's not none, attempt to convert it to datetime and add 1 hour
+	if lastSteal is None:
+		lastSteal = datetime.min
+	
+	log.debug(f"lastSteal: {lastSteal}, now: {now.isoformat()}")
 
 
-	log.debug(f'lastSteal: {stealerdata.get("lastSteal")}, now: {now.isoformat()}')
 	# check lastSteal, if it's been less then an hour, return
-	if (datetime.datetime.fromisoformat(
-			stealerdata.get('lastSteal', datetime.datetime.min.isoformat())) + 
-			datetime.timedelta(hours=1) <
-			now):
-		
-		# set lastSteal to now
-		stealerdata['lastSteal'] = now.isoformat()
+	if lastSteal >= now - timedelta(hours=1):
 
-		# read data of the user to steal from
-		stealeedata = eco_common.readFile(path, str(msg.mentions[0].id))
-		log.debug(f'Stealee: {stealeedata}')
-
-		if stealeedata['wallet'] < MIN_WALLET:
-			log.info('not enough in stealee\'s wallet')
-			await msg.reply('Try stealing from someone who has points')
-			return
-		elif stealerdata['wallet'] < MIN_WALLET / 2:
-			log.info('stealer wallet < 1000, setting succChance to 70%')	
-			succChance = 70
-		else:
-			log.info('stealer wallet > 1000, setting succChance to 45%')
-			succChance = 55
-		
-		failChance = 80
-
-
-		# get a number to decide if we succeed, fail, do nothing or bonus
-		result = random.randrange(100)
-
-
-		if result < succChance:
-
-			percent = _percent()
-			log.debug(percent)
-
-
-			# choose which wallet we get the amount from
-			if stealerdata['wallet'] > stealeedata['wallet']:
-				steal = int(stealeedata['wallet'] * percent)
-				log.debug(
-					f'using stealee wallet: ' +
-					f'{stealeedata["wallet"]} * {percent} = {steal}')
-			else:
-				steal = int(stealerdata['wallet'] * percent)
-				log.debug(
-					f'using stealer wallet: ' + 
-					f'{stealerdata["wallet"]} * {percent} = {steal}')
-
-
-			# set the new values
-			stealerdata['wallet'] += steal
-			stealeedata['wallet'] -= steal
-
-
-			log.info(f'Steal success: stealing {steal} points')
-			await msg.reply(
-				f'success, stealing {steal} points from <@!{msg.mentions[0].id}>')
-
-
-		elif result < failChance:
-
-
-			percent = _percent()
-
-			log.debug(percent)
-
-
-			# choose which wallet we get the amount from
-			if stealerdata['wallet'] > stealeedata['wallet']:
-				steal = int(stealeedata['wallet'] * percent)
-				log.debug(
-					f'using stealee wallet: '
-					f'{stealeedata["wallet"]} * {percent} = {steal}')
-			else:
-				steal = int(stealerdata['wallet'] * percent)
-				log.debug(
-					f'using stealer wallet: ' + 
-					f'{stealerdata["wallet"]} * {percent} = {steal}')
-
-
-			# set the new values
-			stealerdata['wallet'] -= steal
-			stealeedata['wallet'] += steal
-
-
-			log.info(f'Steal fail: stealing -{steal} points')
-			await msg.reply(
-				'oops, got caught, you gave ' + 
-				f'{steal} points to <@!{msg.mentions[0].id}>')
-
-		# 10% chance to do nothing
-		elif result < 90:
-
-			log.info(f'Steal failed: Nothing happened')
-			await msg.reply(f'You broke in, but forgot to steal anything')
-
-		# 5% chance for bonus
-		else:
-			# something that's uncommon but increadibly undesirable
-			# shouldn't change wallet, and shouldn't effect things with a cooldown
-			# once .eco inv is implemented, this will actually do 
-			# something interesting
-			log.warning('BONUS UNIMPLEMENTED')
-			await msg.reply('Bonus: Unimplemented')
-			return
-
-
-		# write new userdata
-		log.debug('Writing userdata')
-		eco_common.writeFile(path, {
-				str(msg.author.id): stealerdata, 
-				str(msg.mentions[0].id): stealeedata})
-
-	else:
-		minutes = 60 - math.floor((now - (datetime.datetime.fromisoformat(
-			stealerdata["lastSteal"]))).seconds / 60)
+		minutes = 60 - math.floor((now - lastSteal).seconds / 60)
 		log.info(f'Steal failed: Hasn\'t been an hour, {minutes} minutes left')
 		await msg.reply(f'Oops! You have to wait another {minutes} minutes')
+		return
+
+
+	# set lastSteal to now
+	stealerData.lastSteal = now
+
+	# read data of the user to steal from
+	stealeeData = UserData.getUserData(path, msg.mentions[0])
+	log.debug(f'Stealee: {stealeeData}')
+
+	
+	if stealeeData.wallet < MIN_WALLET:
+		log.info(f"not enough in stealee\'s wallet ({stealeeData.wallet})")
+		await msg.reply('Try stealing from someone who has points')
+		return
+	
+	elif stealerData.wallet < MIN_WALLET / 2:
+		log.info('stealer wallet < 1000, setting succWeight to 60')
+		succWeight = 100
+	
+	else:
+		log.info('stealer wallet > 1000, setting succWeight to 40')
+		succWeight = 50
+	
+
+	# get a number to decide if we succeed, fail, do nothing or bonus
+	result = random.randrange(succWeight + FAIL_WEIGHT +
+		NOTHING_WEIGHT + BONUS_WEIGHT)
+
+
+	# chance to take money
+	if result < succWeight:
+
+		percent = _percent()
+		log.debug(percent)
+
+
+		# choose which wallet we get the amount from
+		if stealerData.wallet > stealeeData.wallet:
+			steal = int(stealeeData.wallet * percent)
+			log.debug(
+				f'using stealee wallet: ' +
+				f'{stealeeData.wallet} * {percent} = {steal}')
+		else:
+			steal = int(stealerData.wallet * percent)
+			log.debug(
+				f'using stealer wallet: ' + 
+				f'{stealerData.wallet} * {percent} = {steal}')
+
+
+		# set the new values
+		stealerData.wallet += steal
+		stealeeData.wallet -= steal
+
+
+		log.info(f'Steal success: stealing {steal} points')
+		await msg.reply(f"success, stealing {steal} " + 
+			f"points from {stealeeData.user.mention}")
+
+	# chance to give money
+	elif result < FAIL_WEIGHT + succWeight:
+
+
+		percent = _percent()
+
+		log.debug(percent)
+
+
+		# choose which wallet we get the amount from
+		if stealerData.wallet > stealeeData.wallet:
+			steal = int(stealeeData.wallet * percent)
+			log.debug(
+				f'using stealee wallet: '
+				f'{stealeeData.wallet} * {percent} = {steal}')
+		else:
+			steal = int(stealerData.wallet * percent)
+			log.debug(
+				f'using stealer wallet: ' + 
+				f'{stealerData.wallet} * {percent} = {steal}')
+
+
+		# set the new values
+		stealerData.wallet -= steal
+		stealeeData.wallet += steal
+
+
+		log.info(f'Steal fail: stealing -{steal} points')
+		await msg.reply('oops, got caught, you gave ' + 
+			f"{steal} points to {stealeeData.user.mention}")
+
+	# chance to do nothing
+	elif result < NOTHING_WEIGHT + FAIL_WEIGHT + succWeight:
+
+		log.info(f'Steal failed: Nothing happened')
+		await msg.reply(f'You broke in, but forgot to steal anything')
+
+	# chance for bonus
+	else:
+		# something that's uncommon but increadibly undesirable
+		# shouldn't change wallet, and shouldn't effect things 
+		# with a cooldown
+		# once .eco inv is implemented, this will actually do 
+		# something interesting
+		log.warning('BONUS UNIMPLEMENTED')
+		await msg.reply('Bonus: Unimplemented')
+		return
+
+
+	# write new userdata
+	log.debug('Writing userdata')
+	UserData.saveUserDatas([stealerData, stealeeData], path)
+
 
 
 def _percent():
 
-	# get a percentage between 1% and 50%, distributed on the low end
+	# get a percentage between 1% and ~50%, distributed on the low end
 	p1 = int((random.random() * 2.7) + 1)
 	p2 = int((random.random() * 2.7) + 1)
 	p3 = int((random.random() * 2.7) + 1)
