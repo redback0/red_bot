@@ -92,9 +92,9 @@ class UserData():
 
 	def __init__(self, user, userData):
 		self._user = user
-		self._wallet = userData['wallet']
-		self._bank = userData['bank']
-		self._walletMax = userData.get('walletMax', self._wallet)
+		self._wallet = int(userData['wallet'])
+		self._bank = int(userData['bank'])
+		self._walletMax = int(userData.get('walletMax', self._wallet))
 
 		if userData.get('lastDaily') is None:
 			self._lastDaily = date.min
@@ -133,25 +133,25 @@ class UserData():
 
 	@property
 	def wallet(self):
-		return self._wallet
+		return int(self._wallet)
 
 	@wallet.setter
 	def wallet(self, wallet : int):
-		self._wallet = wallet
+		self._wallet = int(wallet)
 		if wallet > self._walletMax:
-			self._walletMax = wallet
+			self._walletMax = int(wallet)
 
 	@property
 	def bank(self):
-		return self._bank
+		return int(self._bank)
 
 	@bank.setter
 	def bank(self, bank : int):
-		self._bank = bank
+		self._bank = int(bank)
 
 	@property
 	def walletMax(self):
-		return self._walletMax
+		return int(self._walletMax)
 
 	@property
 	def lastDaily(self):
