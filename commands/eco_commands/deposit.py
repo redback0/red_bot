@@ -13,15 +13,11 @@ description = 'Put points into your bank. You can only use this once per day'
 servers = []
 
 
-bankMaxMul = 5
-walletMinMul = 0.1
-
 # give a user 500 points, usable once per day
 async def execute(bot, msg, path):
 
 	# check if there's a argument
-	if not ' ' in msg.content[msg.content.find(' ')+1:]:	
-		
+	if not ' ' in msg.content[msg.content.find(' ')+1:]:
 		log.info('User did not give an amount')
 		await msg.reply(
 			'How much would you like to deposit? (`all` for maximum amount)')
@@ -35,8 +31,8 @@ async def execute(bot, msg, path):
 
 
 	today = date.today()
-	maxBank = userData.walletMax * bankMaxMul
-	minWallet = userData.walletMax * walletMinMul
+	maxBank = userData.walletMax * UserData.bankMaxMul
+	minWallet = userData.walletMax * UserData.walletMinMul
 
 	if minWallet < 2000:
 		minWallet = 2000
@@ -59,10 +55,10 @@ async def execute(bot, msg, path):
 		return
 
 	# see if the user has enough in their wallet to deposit
-	elif (userData.wallet <= minWallet or 
+	elif (userData.wallet <= minWallet or
 			userData.wallet <= 2000):
 		log.info(
-			f'{user}\'s wallet is too empty: {userData.wallet} ' + 
+			f'{user}\'s wallet is too empty: {userData.wallet} ' +
 			f'<= {minWallet}')
 		await msg.reply('Your wallet is too empty for this')
 		return
@@ -70,14 +66,11 @@ async def execute(bot, msg, path):
 
 	maxDep = int(userData.wallet - minWallet)
 
-
 	if maxDep < userData.wallet - minWallet:
 		maxDep = userData.wallet - minWallet
 
 	if maxDep > maxBank - userData.bank:
 		maxDep = maxBank - userData.bank
-
-	
 
 
 	# set args list
@@ -94,7 +87,7 @@ async def execute(bot, msg, path):
 		except ValueError:
 			log.info('User entered non integer')
 			await msg.reply(
-				f'{args[1]} is not a number. ' + 
+				f'{args[1]} is not a number. ' +
 				f'Please type all, or enter the amount you\'d like to deposit')
 			return
 

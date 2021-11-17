@@ -27,7 +27,7 @@ class ItemType():
 		self._description = description
 		self._cost = cost
 
-	
+
 	@property
 	def type(self):
 		return self._type
