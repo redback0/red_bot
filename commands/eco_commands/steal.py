@@ -14,9 +14,6 @@ name = "steal"
 description = "Steal points from another player"
 servers = []
 
-
-MIN_WALLET = 2000
-
 FAIL_WEIGHT = 30
 NOTHING_WEIGHT = 5
 BONUS_WEIGHT = 0
@@ -30,6 +27,7 @@ async def execute(bot, msg, path):
 			'Who are you stealing from? usage: `.eco steal <@user>`')
 		log.info('no user to steal from')
 		return
+
 	elif msg.mentions[0] == msg.author:
 		await msg.reply('You can\'t steal from yourself!')
 		log.info('user tried to steal from themself')
@@ -69,12 +67,12 @@ async def execute(bot, msg, path):
 	log.debug(f'Stealee: {stealeeData}')
 
 
-	if stealeeData.wallet < MIN_WALLET:
+	if stealeeData.wallet < UserData.minWallet:
 		log.info(f"not enough in stealee\'s wallet ({stealeeData.wallet})")
 		await msg.reply('Try stealing from someone who has points')
 		return
 
-	elif stealerData.wallet < MIN_WALLET / 2:
+	elif stealerData.wallet < UserData.minWallet / 2:
 		log.info('stealer wallet < 1000, setting succWeight to 60')
 		succWeight = 100
 
