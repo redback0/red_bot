@@ -135,6 +135,9 @@ class UserData():
 
 		invList = []
 
+		if type(userData.get('inventory')) == list:
+			userData['inventory'] == {}
+
 		for item in userData.get('inventory', {}).keys():
 			invList.append(Item(item, userData['inventory'][item]))
 
