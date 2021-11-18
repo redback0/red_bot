@@ -9,7 +9,7 @@ log.setLevel(globs.LOGLEVEL)
 
 name = 'give'
 description = 'directly add points to users bank or wallet'
-usage = ".eco give <@USER> <wallet|bank> <AMMOUNT>"
+usage = f"{globs.DEF_PREFIX}eco give <@USER> <wallet|bank> <AMMOUNT>"
 permissions = "creator"
 
 # directly add points to users bank or wallet

@@ -43,7 +43,7 @@ class Command():
 					self._roles = None
 
 		except:
-			self._permissions = "none"
+			self._permissions = None
 
 
 
@@ -82,7 +82,7 @@ class Command():
 	"""
 	def check_perms(self, msg):
 
-		if self.permissions == "none":
+		if self.permissions == None:
 			return True
 
 		elif msg.author.id == CREATOR:

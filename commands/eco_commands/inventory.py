@@ -39,8 +39,8 @@ async def execute(bot, msg, path):
 	inventory = discord.Embed(title='Inventory')
 
 	for item in userData.inventory:
-		inventory.add_field(name=item.type, value=item.describe)
+		inventory.add_field(name=f"Name: {item.type}", value=item.describe())
 
 
-	await msg.channel.log(inventory)
+	await msg.reply(embed=inventory)
 	log.debug(inventory)

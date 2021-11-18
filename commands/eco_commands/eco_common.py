@@ -2,7 +2,6 @@ import os
 import json
 import logging
 from datetime import *
-from typing import overload
 import discord
 
 import globs
@@ -18,7 +17,7 @@ class UserData():
 
 class ItemType():
 	type: str
-	desciption: str
+	description: str
 	cost: int
 
 
@@ -41,9 +40,9 @@ class ItemType():
 		return self._cost
 
 
-itemTypes = {
-	"test": ItemType("test", "description", 1)
-}
+	def describe(self):
+		return f"Cost: {self._cost}\n{self.description}"
+
 
 
 class Item():
@@ -51,14 +50,35 @@ class Item():
 	An item to go into UserData.inventory
 	"""
 	type: str
+	description: str
 	qty: int
 
 
-	def __init__(self, type):
-		self.type = type
-		self.qty = 1
+	itemTypes = {
+	}
+
+	blankItemType = ItemType("none", "This item doesn't exist", None)
 
 
+	def __init__(self, type, qty=1):
+		self._type = type
+		self._qty = qty
+
+	@property
+	def type(self):
+		return self._type
+
+	@property
+	def description(self):
+		return self.itemTypes.get(self._type, self.blankItemType).description
+
+	@property
+	def qty(self):
+		return self._qty
+
+	@qty.setter
+	def qty(self, qty):
+		self._qty = qty
 
 
 	def describe(self):
@@ -81,9 +101,10 @@ class UserData():
 
 	# a few values that are useful to be able to access
 	bankMaxMul = 5
-	walletMinMul = 0.1
+	walletMinMul = 0.2
 	dailyAmount = 500
 	minWallet = dailyAmount * 4
+	REFUND_RATE = 0.5
 	defUserData = {
 		'wallet': minWallet,
 		'bank': 0
@@ -112,7 +133,13 @@ class UserData():
 			self._lastSteal = datetime.fromisoformat(userData['lastSteal'])
 
 
-		self._inventory = userData.get('inventory', [])
+		invList = []
+
+		for item in userData.get('inventory', {}).keys():
+			invList.append(Item(item, userData['inventory'][item]))
+
+		# this should be a lot more complicated
+		self._inventory = invList
 
 
 	def toDict(self):
@@ -123,8 +150,17 @@ class UserData():
 			"lastDaily": self._lastDaily.isoformat(),
 			"lastDeposit": self._lastDeposit.isoformat(),
 			"lastSteal": self._lastSteal.isoformat(),
-			"inventory": self._inventory
+			"inventory": self.invToDict()
 		}
+
+
+	def invToDict(self):
+		invDict = {}
+
+		for item in self._inventory:
+			invDict[item.type] = item.qty
+
+		return invDict
 
 
 	@property
@@ -181,32 +217,68 @@ class UserData():
 	def inventory(self):
 		return self._inventory
 
-	# method for adding an item to the inventory property
-	def invAddItem(self, type : str, qty=1):
-		try:
-			self._inventory[self._inventory.index(type)].qty += qty
 
-		except ValueError:
+	"""
+	returns the index of a given item type or -1 if it's not found
+	"""
+	def searchInventory(self, type: str):
+		found = False
+		i = 0
+
+		while not found and i < len(self._inventory):
+			if self._inventory[i].type == type:
+				found = True
+				break
+			i += 1
+
+		if found:
+			return i
+		else:
+			return -1
+
+	"""
+	method for adding an item to the inventory property
+	"""
+	def invAddItem(self, type : str, qty=1):
+		found = False
+		i = 0
+
+		while not found and i < len(self._inventory):
+			item = self._inventory[i]
+
+			if item.type == type:
+				item.qty += qty
+				found = True
+
+			i += 1
+
+		if not found:
 			index = len(self._inventory)
-			self._inventory.append(type)
+			self._inventory.append(Item(type))
 			self._inventory[index].qty = qty
 
 
-	# method for removing an item from the inventory property
-	# will return the ammount removed
-	def invRemoveItem(self, item : Item, qty=1):
-		try:
-			# set the items index then use to remove 1 from inventory
-			index = self._inventory.index(item)
-			self._inventory[index].qty -= qty
+	"""
+	method for removing an item from the inventory property
+	will return the ammount removed
+	"""
+	def invRemoveItem(self, type : str, qty=1):
+		i = 0
+		removed = 0
 
-			if self._inventory[index].qty <= 0:
-				qty = qty + self._inventory.qty
-				self._inventory.pop(index)
+		while removed == 0 and i < len(self._inventory):
+			item = self._inventory[i]
 
-			return qty
-		except ValueError:
-			return 0
+			if item.type == type:
+				item.qty -= qty
+				if item.qty <= 0:
+					removed = qty + item.qty
+					del self._inventory[i]
+				break
+
+			i += 1
+
+		return removed
 
 
 	@classmethod
