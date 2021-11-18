@@ -133,10 +133,13 @@ class UserData():
 			self._lastSteal = datetime.fromisoformat(userData['lastSteal'])
 
 
-		invList = []
 
-		if type(userData.get('inventory')) == list:
+		if isinstance(userData.get('inventory', None), list):
 			userData['inventory'] == {}
+			self._inventory = []
+			return
+
+		invList = []
 
 		for item in userData.get('inventory', {}).keys():
 			invList.append(Item(item, userData['inventory'][item]))
