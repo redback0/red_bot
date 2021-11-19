@@ -96,6 +96,7 @@ async def execute(bot, msg, path):
 		if userData.wallet < totalCost:
 			await msg.reply("You don't have enough points to do that")
 			log.info("User tried to buy, but didn't have enough points")
+			return
 
 
 		# all cases checked, do the calculations
