@@ -54,7 +54,13 @@ class Item():
 	qty: int
 
 
+	# a dictionary of all itemTypes
+	# used as a reference for `.eco shop` as well as for adding items
+	# as well as certain Item methods
 	itemTypes = {
+		# "type": ItemType("type", "description", cost)
+		"stuff": ItemType("stuff", "A bunch of useless stuff (don't buy)", 100),
+		"pickaxe": ItemType("pickaxe", "Seems kinda blunt", 500)
 	}
 
 	blankItemType = ItemType("none", "This item doesn't exist", None)
@@ -63,6 +69,7 @@ class Item():
 	def __init__(self, type, qty=1):
 		self._type = type
 		self._qty = qty
+
 
 	@property
 	def type(self):
