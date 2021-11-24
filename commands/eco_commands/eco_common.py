@@ -1,4 +1,5 @@
 import os
+from importlib import import_module, util
 import json
 import logging
 from datetime import *
@@ -21,10 +22,18 @@ class ItemType():
 	cost: int
 
 
+	_path = "commands.eco_commands.use_item."
+
+
 	def __init__(self, type, description, cost):
 		self._type = type
 		self._description = description
 		self._cost = cost
+
+		if util.find_spec(f"{self._path}{type}"):
+			self.use = import_module(f'{self._path}{type}').use
+			log.debug(f"overrode {type}")
+
 
 
 	@property
@@ -38,6 +47,13 @@ class ItemType():
 	@property
 	def cost(self):
 		return self._cost
+
+	"""
+	A function to be overriden by a function from a file
+	"""
+	def use(self, qty):
+		log.debug("Used an item with no use")
+		return -1
 
 
 	def describe(self):
@@ -60,13 +76,13 @@ class Item():
 	itemTypes = {
 		# "type": ItemType("type", "description", cost)
 		"stuff": ItemType("stuff", "A bunch of useless stuff (don't buy)", 100),
-		"pickaxe": ItemType("pickaxe", "Seems kinda blunt", 500)
+		"pickaxe": ItemType("pickaxe", "Seems kinda blunt", 5000)
 	}
 
 	blankItemType = ItemType("none", "This item doesn't exist", None)
 
 
-	def __init__(self, type, qty=1):
+	def __init__(self, type : str, qty=1):
 		self._type = type
 		self._qty = qty
 

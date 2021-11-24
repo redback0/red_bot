@@ -1,4 +1,3 @@
-import os
 import traceback
 from importlib import import_module, util
 import logging
@@ -22,21 +21,20 @@ async def execute(bot, msg):
 			'Runs abitrary scripts, give a script as an argument')
 		log.info('No subcommand given')
 		return
-	
+
 
 	iCMDEnd = msg.content.find(' ')+1
 	iScriptEnd = msg.content[iCMDEnd:].find(' ')
 
 	# find the second word in msg.content:
-	# go from 1 more than the index of the first space, 
+	# go from 1 more than the index of the first space,
 	# to the index of the next space
 	if not iScriptEnd == -1:
 		script = msg.content[iCMDEnd:iScriptEnd]
 	else:
 		script = msg.content[iCMDEnd:]
-	
-	log.info(f'Subcommand: {script}')
 
+	log.info(f'Subcommand: {script}')
 
 
 	try:
