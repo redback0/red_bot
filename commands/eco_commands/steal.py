@@ -173,8 +173,11 @@ async def execute(bot, msg, path):
 def _percent():
 
 	# get a percentage between 1% and ~50%, distributed on the low end
-	p1 = int((random.random() * 2.7) + 1)
-	p2 = int((random.random() * 2.7) + 1)
-	p3 = int((random.random() * 2.7) + 1)
 
-	return (p1 * p2 * p3 / 100)
+	p1 = random.randrange(1, 3.7, 0.1) # get a random number between 1 and 3.7
+	p2 = random.randrange(1, 3.7, 0.1)
+	p3 = random.randrange(1, 3.7, 0.1)
+
+	# multiply them all together and divide the whole thing by 100 to
+	# get a number between 0 and ~0.5
+	return p1 * p2 * p3 / 100
