@@ -95,11 +95,11 @@ class Command():
 			else:
 				guild = msg.guild.id
 
-
 			log.debug(f"guild ID: {guild}")
 
 			if guild in self.guilds:
 				return True
+
 
 		elif self.permissions == "roles":
 			# roles permission is not yet implemented
