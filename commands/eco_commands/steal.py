@@ -174,9 +174,9 @@ def _percent():
 
 	# get a percentage between 1% and ~50%, distributed on the low end
 
-	p1 = random.randrange(1, 3.7, 0.1) # get a random number from 1 to 3.6
-	p2 = random.randrange(1, 3.7, 0.1)
-	p3 = random.randrange(1, 3.7, 0.1)
+	p1 = random.randrange(10, 37, 1) / 10 # get a random number from 1 to 3.6
+	p2 = random.randrange(10, 37, 1) / 10
+	p3 = random.randrange(10, 37, 1) / 10
 
 	# multiply them all together and divide the whole thing by 100 to
 	# get a number between 0 and ~0.5
