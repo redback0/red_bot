@@ -62,6 +62,7 @@ async def execute(bot, msg, path):
 		# place the author if not in top 10
 		elif foundAuthor:
 			topDes += f'\n\n{i}. {worths[user]}, {user.name}'
+			foundAuthor = False
 
 
 	top = discord.Embed(title='Leaderboard', description=topDes)
