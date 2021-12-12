@@ -22,6 +22,9 @@ async def execute(bot, msg):
 		elif 'red__' in msgtrim:
 			await msg.reply("who's that?")
 			await msg.reply(f'also {msg.author.mention} is 100% cringe')
+		elif '@everyone' in msgtrim or '@here' in msgtrim:
+			await msg.reply(f'nice try')
+			await msg.reply(f'{msg.author.mention} is 100% cringe')
 		else:
 			if msg.author.id == 208038162180734976:
 				chance = 100

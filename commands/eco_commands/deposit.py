@@ -67,10 +67,10 @@ async def execute(bot, msg, path):
 	maxDep = int(userData.wallet - minWallet)
 
 	if maxDep < userData.wallet - minWallet:
-		maxDep = userData.wallet - minWallet
+		maxDep = int(userData.wallet - minWallet)
 
 	if maxDep > maxBank - userData.bank:
-		maxDep = maxBank - userData.bank
+		maxDep = int(maxBank - userData.bank)
 
 
 	# set args list
