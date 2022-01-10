@@ -14,7 +14,11 @@ name = "steal"
 description = "Steal points from another player"
 servers = []
 
-FAIL_WEIGHT = 30
+
+# how much more chance there is to steal then to fail given all equals
+ADD_SUCC = 25
+
+FAIL_WEIGHT = 50
 NOTHING_WEIGHT = 5
 BONUS_WEIGHT = 0
 
@@ -22,6 +26,7 @@ BONUS_WEIGHT = 0
 # steal points from another player
 async def execute(bot, msg, path):
 
+	# check who to steal from
 	if msg.mentions == []:
 		await msg.reply(
 			'Who are you stealing from? usage: `.eco steal <@user>`')
@@ -33,10 +38,14 @@ async def execute(bot, msg, path):
 		log.info('user tried to steal from themself')
 		return
 
-
 	# get data for the user stealing
 	stealerData = UserData.getUserData(path, msg.author)
 	log.debug(f'stealer: {stealerData}')
+
+
+
+	# *************************************************************************
+	# check time
 
 	# set lastSteal and now
 	now = datetime.today()
@@ -61,24 +70,30 @@ async def execute(bot, msg, path):
 
 	# set lastSteal to now
 	stealerData.lastSteal = now
+	# *************************************************************************
+
+
+
 
 	# read data of the user to steal from
 	stealeeData = UserData.getUserData(path, msg.mentions[0])
 	log.debug(f'Stealee: {stealeeData}')
 
 
+	# check if the user has enough points to steal from
 	if stealeeData.wallet < UserData.minWallet:
 		log.info(f"not enough in stealee\'s wallet ({stealeeData.wallet})")
 		await msg.reply('Try stealing from someone who has points')
 		return
 
-	elif stealerData.wallet < UserData.minWallet / 2:
-		log.info('stealer wallet < 1000, setting succWeight to 60')
-		succWeight = 100
 
-	else:
-		log.info('stealer wallet > 1000, setting succWeight to 40')
-		succWeight = 60
+
+	# set succWeight
+
+	walletRatio = stealeeData.wallet / stealerData.wallet
+
+	# as walletRatio approaches 0, succWeight approaches 50
+	succWeight = walletRatio * ADD_SUCC + FAIL_WEIGHT
 
 
 	# get a number to decide if we succeed, fail, do nothing or bonus
@@ -92,18 +107,8 @@ async def execute(bot, msg, path):
 		percent = _percent()
 		log.debug(percent)
 
-
-		# choose which wallet we get the amount from
-		if stealerData.wallet > stealeeData.wallet:
-			steal = int(stealeeData.wallet * percent)
-			log.debug(
-				f'using stealee wallet: ' +
-				f'{stealeeData.wallet} * {percent} = {steal}')
-		else:
-			steal = int(stealerData.wallet * percent)
-			log.debug(
-				f'using stealer wallet: ' +
-				f'{stealerData.wallet} * {percent} = {steal}')
+		# multiply the less of the 2 wallets by the percentage
+		steal = int(min(stealeeData.wallet, stealerData.wallet) * percent)
 
 
 		# set the new values
