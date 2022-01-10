@@ -93,7 +93,7 @@ async def execute(bot, msg, path):
 	walletRatio = stealeeData.wallet / stealerData.wallet
 
 	# as walletRatio approaches 0, succWeight approaches 50
-	succWeight = walletRatio * ADD_SUCC + FAIL_WEIGHT
+	succWeight = int(walletRatio * ADD_SUCC + FAIL_WEIGHT)
 
 
 	# get a number to decide if we succeed, fail, do nothing or bonus
