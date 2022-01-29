@@ -13,9 +13,6 @@ name = 'top'
 description = 'Shows a leaderboard'
 servers = []
 
-delUser = object
-delUser.name = "<deleted>"
-
 
 # the leaderboard command
 async def execute(bot, msg, path):
@@ -34,8 +31,6 @@ async def execute(bot, msg, path):
 
 	# calculate total value of each user
 	for userData in userDatas:
-		if (userData.user is None):
-			userData.user = delUser
 		log.debug(f'adding user: {userData.user.name}')
 		# worth = bank + wallet // in future may include some
 		worth = int(userData.wallet + userData.bank)
