@@ -16,7 +16,7 @@ servers = []
 
 
 # how much more chance there is to steal then to fail given all equals
-ADD_SUCC = 25
+ADD_SUCC = 50
 
 FAIL_WEIGHT = 50
 NOTHING_WEIGHT = 5
