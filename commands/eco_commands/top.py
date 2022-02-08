@@ -13,6 +13,7 @@ name = 'top'
 description = 'Shows a leaderboard'
 servers = []
 
+BAD_USER = type('', (), {})()
 
 # the leaderboard command
 async def execute(bot, msg, path):
@@ -28,9 +29,13 @@ async def execute(bot, msg, path):
 	worths = {}
 
 
-
 	# calculate total value of each user
 	for userData in userDatas:
+		log.debug(userData)
+		if userData.user is None:
+			userData._user = BAD_USER
+			userData.user.name = "USER_NOT_FOUND"
+
 		log.debug(f'adding user: {userData.user.name}')
 		# worth = bank + wallet // in future may include some
 		worth = int(userData.wallet + userData.bank)
