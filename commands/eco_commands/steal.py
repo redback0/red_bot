@@ -92,7 +92,7 @@ async def execute(bot, msg, path):
 
 	walletRatio = stealeeData.wallet / stealerData.wallet
 
-	# as walletRatio approaches 0, succWeight approaches 50
+	# as walletRatio approaches 0, succWeight approaches FAIL_WEIGHT
 	succWeight = int(walletRatio * ADD_SUCC + FAIL_WEIGHT)
 
 

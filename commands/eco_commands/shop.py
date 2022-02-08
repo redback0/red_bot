@@ -38,7 +38,7 @@ async def execute(bot, msg, path):
 
 			# tell the user how to buy an item
 			shop.description = "To buy something do " + \
-				"`.eco shop buy <itemName> [quantity]`"
+				f"`{globs.DEF_PREFIX}eco shop buy <itemName> [quantity]`"
 
 
 		await msg.reply(embed=shop)
@@ -182,5 +182,5 @@ async def execute(bot, msg, path):
 
 	# if args[1] is neither 'sell' or 'buy'
 	await msg.reply(f"Invalid option {usage}; try either `sell` or `buy`")
-	log.info("User gave an invalid argument `.eco shop [badArg]`")
+	log.info(f"User gave an invalid argument `{globs.DEF_PREFIX}eco shop [badArg]`")
 	return
