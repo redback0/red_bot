@@ -81,7 +81,7 @@ async def execute(bot, msg):
 
 		else:
 			await msg.reply(
-				'Invalid command; Do .eco help for available commands')
+				f'Invalid command; Do {PREFIX}eco help for available commands')
 			log.info(f'Invalid sub command: {subcmd}')
 
 	except Exception as err:
