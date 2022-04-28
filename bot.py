@@ -110,11 +110,17 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 				log.warning(traceback.format_exc())
 				log.warning(err)
 
+def main():
 
-intents = discord.Intents().all()
-intents.presences = False
+	intents = discord.Intents().all()
+	intents.presences = False
 
-log.info(intents)
+	log.info(intents)
 
-client = MyClient(intents=intents)
-client.run(TOKEN)
+	client = MyClient(intents=intents)
+	client.run(TOKEN)
+
+
+if __name__ == "__main__":
+	main()
+
