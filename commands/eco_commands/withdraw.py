@@ -7,12 +7,12 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(globs.LOGLEVEL)
 
-name = "description"
+name = "withdraw"
 description = "Withdraw points from bank"
 
 async def execute(bot, msg, path):
 
-# check if there's a argument
+	# check if there's a argument
 	if not ' ' in msg.content[msg.content.find(' ')+1:]:
 
 		log.info('User did not give an amount')
