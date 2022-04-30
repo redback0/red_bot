@@ -1,6 +1,7 @@
 import os
 import traceback
 import logging
+import json
 import discord
 from dotenv import load_dotenv
 import globs
@@ -109,6 +110,71 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 				log.warning(f"Command {command} had a problem:")
 				log.warning(traceback.format_exc())
 				log.warning(err)
+
+
+
+	async def on_raw_reaction_add(self, payload):
+		log.debug("raw reaction added")
+		log.debug(str(payload.emoji))
+
+		get_reaction_role(str(payload.guild_id),
+				str(payload.message_id), str(payload.emoji))
+
+
+
+	async def on_raw_reaction_remove(self, payload):
+		log.debug("raw reaction removed")
+
+
+		get_reaction_role(str(payload.guild_id),
+				str(payload.message_id), str(payload.emoji))
+
+
+
+
+def get_reaction_role(guild_id : str, message_id : str, emoji : str):
+	log.debug("finding role")
+
+
+	rrPath = "reaction_roles.json"
+
+	# if file exists, open and dump json to data
+	if os.path.isfile(rrPath):
+		with open(rrPath, mode='rt', encoding='utf-16') as file:
+			data = json.load(file)
+
+		log.debug('read from file')
+		log.debug(data.keys())
+
+	else:
+		log.warning(f'file did not exist, exiting')
+		return False
+
+
+	# get the value for this message
+	rrMessage = data.get(f"{guild_id},{message_id}")
+
+	log.debug(rrMessage)
+	log.debug(str(emoji))
+
+	# if the value didn't exist, quit
+	if rrMessage is None:
+		log.info("Message not for reaction roles, exiting")
+		return False
+
+
+	# get the value of the role for this emoji
+	rrRole = rrMessage.get(emoji)
+
+	log.debug(rrRole)
+
+	if rrRole is not None:
+		log.info(f"found role: {rrRole}")
+		return rrRole
+
+
+
+
 
 def main():
 
