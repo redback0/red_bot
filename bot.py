@@ -113,26 +113,62 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 
 
+
 	async def on_raw_reaction_add(self, payload):
 		log.debug("raw reaction added")
 		log.debug(str(payload.emoji))
 
-		get_reaction_role(str(payload.guild_id),
+		# set guild based on payload.guild_id
+		guild = self.get_guild(payload.guild_id)
+
+		log.debug(guild.roles)
+
+		# get the role based on guild, message and emoji/reaction
+		role = get_reaction_role(guild,
 				str(payload.message_id), str(payload.emoji))
+
+
+		if role is False:
+			log.debug("No role, nothing to do")
+
+
+		user = guild.get_member(payload.user_id)
+
+		if not has_role(user, role):
+
+			await user.add_roles(role)
+
+
 
 
 
 	async def on_raw_reaction_remove(self, payload):
 		log.debug("raw reaction removed")
 
+		# set guild based on payload.guild_id
+		guild = self.get_guild(payload.guild_id)
 
-		get_reaction_role(str(payload.guild_id),
+		log.debug(guild.roles)
+
+		# get the role based on guild, message and emoji/reaction
+		role = get_reaction_role(guild,
 				str(payload.message_id), str(payload.emoji))
 
 
+		if role is False:
+			log.debug("No role, nothing to do")
 
 
-def get_reaction_role(guild_id : str, message_id : str, emoji : str):
+		user = guild.get_member(payload.user_id)
+
+		if has_role(user, role):
+
+			await user.remove_roles(role)
+
+
+
+
+def get_reaction_role(guild, message_id : str, emoji : str):
 	log.debug("finding role")
 
 
@@ -152,7 +188,7 @@ def get_reaction_role(guild_id : str, message_id : str, emoji : str):
 
 
 	# get the value for this message
-	rrMessage = data.get(f"{guild_id},{message_id}")
+	rrMessage = data.get(f"{guild.id},{message_id}")
 
 	log.debug(rrMessage)
 	log.debug(str(emoji))
@@ -163,14 +199,36 @@ def get_reaction_role(guild_id : str, message_id : str, emoji : str):
 		return False
 
 
-	# get the value of the role for this emoji
-	rrRole = rrMessage.get(emoji)
+	# get the id of the role for this emoji
+	rrRole_id = rrMessage.get(emoji)
 
-	log.debug(rrRole)
+	log.debug(f"role id: {rrRole_id}")
 
+	# get the role
+	rrRole = guild.get_role(int(rrRole_id))
+
+	log.debug(f"role object: {rrRole}")
+
+	# if we got a role, return it
 	if rrRole is not None:
-		log.info(f"found role: {rrRole}")
+		log.info(f"got role: {rrRole}")
+
+		#return role object
 		return rrRole
+
+	log.info(f"no role for emoji")
+
+	return False
+
+
+
+def has_role(user, role):
+
+	for userRole in user.roles[1:]:
+		if userRole == role:
+			return True
+
+	return False
 
 
 
