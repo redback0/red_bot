@@ -2,6 +2,8 @@ import logging
 import globs
 import os
 import json
+import discord
+import time
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -46,8 +48,6 @@ async def execute(bot, msg):
 
 	emojis = rrPairs.keys()
 
-	log.debug(bot.emojis)
-
 	"""
 	for emoji in emojis:
 		if not emoji in bot.emojis:
@@ -68,8 +68,14 @@ async def execute(bot, msg):
 	sentMessage = await msg.channel_mentions[0].send(message)
 
 	# react to the sent message with all the emoji
-	for emoji in emojis: await sentMessage.add_reaction(emoji)
-
+	for emoji in emojis:
+		try:
+			await sentMessage.add_reaction(emoji)
+		except discord.HTTPException as error:
+			log.debug("Bad emoji")
+			await sentMessage.delete()
+			await msg.reply(f"{emoji} is not a valid emoji here")
+			return
 
 
 	#create json entry
