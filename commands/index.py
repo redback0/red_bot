@@ -37,10 +37,17 @@ class Command():
 
 			elif self.permissions == "roles":
 				try:
-					self._roles = module.guilds
+					self._roles = module.roles
 
 				except:
 					self._roles = None
+
+			elif self.permissions == "roleperms":
+				try:
+					self._roleperms = module.roleperms
+
+				except:
+					self._roleperms = None
 
 		except:
 			self._permissions = None
@@ -105,6 +112,11 @@ class Command():
 			# roles permission is not yet implemented
 			pass
 
+
+		elif self.permissions == "roleperms":
+			# not yet implemented
+			pass
+
 		return False
 
 	"""
@@ -132,6 +144,7 @@ cmds = {
 	'cringe': Command(import_module(f'{path}cringe')),
 	'server': Command(import_module(f'{path}server')),
 	'eco': Command(import_module(f'{path}eco')),
-	'script': Command(import_module(f'{path}script'))
+	'script': Command(import_module(f'{path}script')),
+	'rrsetup': Command(import_module(f'{path}rrsetup'))
 }
 

@@ -1,3 +1,5 @@
 `.eco transfer` transfer points from one user to another
 
-Add reaction roles
+Implement permissions for `roles` and `roleperms`
+
+Add UI to reaction roles
