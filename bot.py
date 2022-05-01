@@ -115,13 +115,12 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 
 	async def on_raw_reaction_add(self, payload):
-		log.debug("raw reaction added")
-		log.debug(str(payload.emoji))
+
+		if self.user.id == payload.user_id:
+			return
 
 		# set guild based on payload.guild_id
 		guild = self.get_guild(payload.guild_id)
-
-		log.debug(guild.roles)
 
 		# get the role based on guild, message and emoji/reaction
 		role = get_reaction_role(guild,
@@ -143,12 +142,9 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 
 	async def on_raw_reaction_remove(self, payload):
-		log.debug("raw reaction removed")
 
 		# set guild based on payload.guild_id
 		guild = self.get_guild(payload.guild_id)
-
-		log.debug(guild.roles)
 
 		# get the role based on guild, message and emoji/reaction
 		role = get_reaction_role(guild,
