@@ -8,7 +8,7 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(globs.LOGLEVEL)
 
-from mcstatus import MinecraftServer as mcPing
+from mcstatus import JavaServer
 
 name = 'server'
 description = 'Pings minecraft servers'
@@ -17,19 +17,18 @@ description = 'Pings minecraft servers'
 async def execute(bot, msg):
 
 	# create args list, a list of all words after the command
-	# eg:  msg.content = ".server ttpg.xyz hey"; args = ["ttpg.xyz", "hey"]
 	if not ' ' in msg.content:
 		await msg.channel.send('You need to specify a server to ping')
 		log.info('No server given')
 		return
 	args = msg.content[msg.content.find(' ')+1:].split()
-	
+
 	log.info(f'checking status of: {args[0]}')
 
 	if args[0] == 'ttpg.xyz':
 
 		# create a server pointing to localhost
-		server = mcPing("127.0.0.1", 25565)
+		server = JavaServer("127.0.0.1", 25565)
 
 		# try to ping the server
 		try:
@@ -50,14 +49,14 @@ async def execute(bot, msg):
 		if not myIP == ttpgIP:
 			log.info(f'me:{myIP} != ttpg:{ttpgIP}')
 			await msg.channel.send("DNS is wrong, it'll be back in max 15 mins")
-		
+
 		else:
 			log.info(f'me:{myIP} == ttpg:{ttpgIP}')
 
 		return
 
 
-	server = mcPing.lookup(args[0])
+	server = JavaServer.lookup(args[0])
 
 	try:
 		status = server.status()
@@ -79,8 +78,7 @@ def infoBuilder(res, args):
 	desc = res.description.splitlines();
 
 	while desc[0].find("§") > 0:
-		
-		log.debug(desc[0])
+
 		n = desc[0].find("§")
 		desc[0] = desc[0][:n] + desc[0][n+2:]
 
@@ -94,13 +92,13 @@ def infoBuilder(res, args):
 		log.debug(line)
 
 		while line.find("§") > 0:
-		
+
 			log.debug(line)
 			n = line.find("§")
 			line = line[:n] + line[n+2:]
 
 		log.debug(line)
-		
+
 		resultdesc += f'{line.strip()}\n'
 
 	result.add_field(name='Version', value=res.version.name)
@@ -110,10 +108,10 @@ def infoBuilder(res, args):
 	if not res.players.sample == None:
 
 		userNames = []
-		for user in res.players.sample: 
+		for user in res.players.sample:
 			userNames.append(user.name)
 
-		result.add_field(name='Players', 
+		result.add_field(name='Players',
 			value=f'{res.players.online}/{res.players.max} ({", ".join(userNames)})')
 	else:
 		result.add_field(name='Players', value=f'{res.players.online}/{res.players.max}')
