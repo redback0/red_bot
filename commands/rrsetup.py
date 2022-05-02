@@ -43,17 +43,15 @@ async def execute(bot, msg):
 
 		columns = [c.strip(" <>@&") for c in line.split("=")]
 
-		rrPairs[columns[0]] = columns[1]
+		if columns[0][0] == ":":
+			rrPairs[f"<{columns[0]}>"] = columns[1]
+		else:
+			rrPairs[columns[0]] = columns[1]
+
 
 
 	emojis = rrPairs.keys()
 
-	"""
-	for emoji in emojis:
-		if not emoji in bot.emojis:
-			await msg.reply(f"Invalid emoji: {emoji}")
-			return
-	"""
 
 	#create the message for rr
 	message = "React to get role:"
