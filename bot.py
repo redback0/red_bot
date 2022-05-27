@@ -129,6 +129,7 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 		if role is False:
 			log.debug("No role, nothing to do")
+			return
 
 
 		user = guild.get_member(payload.user_id)
@@ -153,6 +154,7 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 		if role is False:
 			log.debug("No role, nothing to do")
+			return
 
 
 		user = guild.get_member(payload.user_id)
