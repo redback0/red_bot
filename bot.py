@@ -181,7 +181,7 @@ def get_reaction_role(guild, message_id : str, emoji : str):
 		log.debug(data.keys())
 
 	else:
-		log.warning(f'file did not exist, exiting')
+		log.debug(f'file did not exist, exiting')
 		return False
 
 
@@ -193,7 +193,7 @@ def get_reaction_role(guild, message_id : str, emoji : str):
 
 	# if the value didn't exist, quit
 	if rrMessage is None:
-		log.info("Message not for reaction roles, exiting")
+		log.debug("Message not for reaction roles, exiting")
 		return False
 
 
