@@ -25,36 +25,6 @@ async def execute(bot, msg):
 
 	log.info(f'checking status of: {args[0]}')
 
-	if args[0] == 'ttpg.xyz':
-
-		# create a server pointing to localhost
-		server = JavaServer("127.0.0.1", 25565)
-
-		# try to ping the server
-		try:
-			status = server.status()
-		except:
-			await msg.channel.send('Server offline')
-			log.info('Server offline')
-			return
-
-		# send the response to infoBuilder to build the messages to send
-		info = infoBuilder(status, args)
-		await msg.channel.send(embed=info)
-
-		# check IP of ttpg.xyz against my IP
-		ttpgIP = socket.gethostbyname('ttpg.xyz')
-		myIP = request.urlopen('https://ident.me').read().decode('utf8')
-
-		if not myIP == ttpgIP:
-			log.info(f'me:{myIP} != ttpg:{ttpgIP}')
-			await msg.channel.send("DNS is wrong, it'll be back in max 15 mins")
-
-		else:
-			log.info(f'me:{myIP} == ttpg:{ttpgIP}')
-
-		return
-
 
 	server = JavaServer.lookup(args[0])
 
@@ -77,10 +47,14 @@ def infoBuilder(res, args):
 
 	desc = res.description.splitlines();
 
-	while desc[0].find("§") > 0:
+	log.debug(desc[0])
+
+	while desc[0].find("§") >= 0:
 
 		n = desc[0].find("§")
 		desc[0] = desc[0][:n] + desc[0][n+2:]
+
+		log.debug(desc[0])
 
 	result = discord.Embed(title=desc[0])
 
@@ -91,13 +65,13 @@ def infoBuilder(res, args):
 
 		log.debug(line)
 
-		while line.find("§") > 0:
+		while line.find("§") >= 0:
 
-			log.debug(line)
 			n = line.find("§")
 			line = line[:n] + line[n+2:]
 
-		log.debug(line)
+			log.debug(line)
+
 
 		resultdesc += f'{line.strip()}\n'
 
@@ -109,7 +83,25 @@ def infoBuilder(res, args):
 
 		userNames = []
 		for user in res.players.sample:
-			userNames.append(user.name)
+
+			username = user.name
+
+			i = -2
+
+			log.debug(username)
+
+			while username[i+2:].find("_") >= 0:
+
+				i = username.find("_")
+
+				username = username[:i] + "\\" + username[i:]
+
+				log.debug(username)
+
+				if i < 0: break
+
+
+			userNames.append(username)
 
 		result.add_field(name='Players',
 			value=f'{res.players.online}/{res.players.max} ({", ".join(userNames)})')
@@ -117,8 +109,6 @@ def infoBuilder(res, args):
 		result.add_field(name='Players', value=f'{res.players.online}/{res.players.max}')
 
 	result.description = resultdesc
-
-	log.info(result)
 
 	return result
 
