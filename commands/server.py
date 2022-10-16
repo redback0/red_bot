@@ -15,101 +15,91 @@ description = 'Pings minecraft servers'
 
 
 async def execute(bot, msg):
+    # create args list, a list of all words after the command
+    if not ' ' in msg.content:
+        await msg.channel.send('You need to specify a server to ping')
+        log.info('No server given')
+        return
+    args = msg.content[msg.content.find(' ') + 1:].split()
 
-	# create args list, a list of all words after the command
-	if not ' ' in msg.content:
-		await msg.channel.send('You need to specify a server to ping')
-		log.info('No server given')
-		return
-	args = msg.content[msg.content.find(' ')+1:].split()
+    log.info(f'checking status of: {args[0]}')
 
-	log.info(f'checking status of: {args[0]}')
+    server = JavaServer.lookup(args[0])
 
+    try:
+        status = server.status()
+    except:
+        await msg.channel.send('Server offline')
+        log.info('Server offline')
+        return
 
-	server = JavaServer.lookup(args[0])
-
-	try:
-		status = server.status()
-	except:
-		await msg.channel.send('Server offline')
-		log.info('Server offline')
-		return
-
-	info = infoBuilder(status, args)
-	await msg.channel.send(embed=info)
+    info = infoBuilder(status, args)
+    await msg.channel.send(embed=info)
 
 
 # takes the response of a ping and puts it in a nice format for discord
 def infoBuilder(res, args):
+    resultdesc = ''
 
+    desc = res.description.splitlines();
 
-	resultdesc = ''
+    log.debug(desc[0])
 
-	desc = res.description.splitlines();
+    while desc[0].find("§") >= 0:
+        n = desc[0].find("§")
+        desc[0] = desc[0][:n] + desc[0][n + 2:]
 
-	log.debug(desc[0])
+        log.debug(desc[0])
 
-	while desc[0].find("§") >= 0:
+    result = discord.Embed(title=desc[0])
 
-		n = desc[0].find("§")
-		desc[0] = desc[0][:n] + desc[0][n+2:]
+    result.add_field(name='IP', value=f'{args[0]}\n')
 
-		log.debug(desc[0])
+    # clean any whitespace and remove color selectors (§)
+    for line in desc[1:]:
 
-	result = discord.Embed(title=desc[0])
+        log.debug(line)
 
-	result.add_field(name='IP', value=f'{args[0]}\n')
+        while line.find("§") >= 0:
+            n = line.find("§")
+            line = line[:n] + line[n + 2:]
 
-	# clean any whitespace and remove color selectors (§)
-	for line in desc[1:]:
+            log.debug(line)
 
-		log.debug(line)
+        resultdesc += f'{line.strip()}\n'
 
-		while line.find("§") >= 0:
+    result.add_field(name='Version', value=res.version.name)
 
-			n = line.find("§")
-			line = line[:n] + line[n+2:]
+    # list names of all players in res.players.sample[]
+    # in the format (player1, player2, player3)
+    if not res.players.sample == None:
 
-			log.debug(line)
+        userNames = []
+        for user in res.players.sample:
 
+            username = user.name
 
-		resultdesc += f'{line.strip()}\n'
+            i = -2
 
-	result.add_field(name='Version', value=res.version.name)
+            log.debug(username)
 
-	# list names of all players in res.players.sample[]
-	# in the format (player1, player2, player3)
-	if not res.players.sample == None:
+            while username[i + 2:].find("_") >= 0:
 
-		userNames = []
-		for user in res.players.sample:
+                i = username.find("_")
 
-			username = user.name
+                username = username[:i] + "\\" + username[i:]
 
-			i = -2
+                log.debug(username)
 
-			log.debug(username)
+                if i < 0: break
 
-			while username[i+2:].find("_") >= 0:
+            userNames.append(username)
 
-				i = username.find("_")
+        result.add_field(name='Players',
+                         value=f'{res.players.online}/{res.players.max} ({", ".join(userNames)})')
+    else:
+        result.add_field(name='Players', value=f'{res.players.online}/{res.players.max}')
 
-				username = username[:i] + "\\" + username[i:]
+    result.description = resultdesc
 
-				log.debug(username)
-
-				if i < 0: break
-
-
-			userNames.append(username)
-
-		result.add_field(name='Players',
-			value=f'{res.players.online}/{res.players.max} ({", ".join(userNames)})')
-	else:
-		result.add_field(name='Players', value=f'{res.players.online}/{res.players.max}')
-
-	result.description = resultdesc
-
-	return result
-
-
+    return result

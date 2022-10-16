@@ -44,6 +44,7 @@ ecocmds = {
 	'withdraw': EcoCommand(import_module(f'{path}withdraw')),
 	'shop': EcoCommand(import_module(f'{path}shop')),
 	'use': EcoCommand(import_module(f'{path}use')),
+	"gift": EcoCommand(import_module(f'{path}gift'))
 }
 
 # aliases
