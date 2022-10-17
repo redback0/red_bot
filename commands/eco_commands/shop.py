@@ -62,6 +62,11 @@ async def execute(bot, msg, path):
             log.info("User gave an invalid itemtype")
             return
 
+        if not itemType.buyAble:
+            await msg.reply("That item cannot be bought.")
+            log.info("cannot be bought")
+            return
+
         # parse qty if it exists, otherwise set it to 1
         if len(args) > 2:
             try:

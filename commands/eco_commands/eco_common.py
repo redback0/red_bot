@@ -16,14 +16,16 @@ class ItemType:
     description: str
     cost: int
     useAble: bool
+    buyAble: bool
 
     _path = "commands.eco_commands.use_item."
 
-    def __init__(self, itemType: str, description: str, cost: int, useAble: bool) -> None:
+    def __init__(self, itemType: str, description: str, cost: int, useAble: bool, buyAble) -> None:
         self._type = itemType
         self._description = description
         self._cost = cost
         self._useAble = useAble
+        self._buyAble = buyAble
 
         if util.find_spec(f"{self._path}{itemType}"):
             self.use = import_module(f'{self._path}{itemType}').use
@@ -44,6 +46,10 @@ class ItemType:
     @property
     def useAble(self) -> bool:
         return self._useAble
+
+    @property
+    def buyAble(self) -> bool:
+        return self._buyAble
 
     async def use(self, qty: int) -> int | None:
         log.debug("Used an item with no use")
@@ -67,12 +73,13 @@ class Item:
     # as well as certain Item methods
     itemTypes = {
         # "type": ItemType("type", "description", cost)
-        "stuff": ItemType("stuff", "A bunch of useless stuff (don't buy)", 100, False),
-        "pickaxe": ItemType("pickaxe", "Seems kinda blunt", 5000, True),
-        "wagerizer": ItemType("wagerizer", "Increases your eco daily by 100 points. Does not stack.", 15000, False)
+        "stuff": ItemType("stuff", "A bunch of useless stuff (don't buy)", 100, False, True),
+        "pickaxe": ItemType("pickaxe", "Seems kinda blunt", 5000, True, True),
+        "wagerizer": ItemType("wagerizer", "Increases your eco daily by 100 points. Does not stack.", 15000, False,
+                              True)
     }
 
-    blankItemType = ItemType("none", "This item doesn't exist", 99999999, False)
+    blankItemType = ItemType("none", "This item doesn't exist", 99999999, False, False)
 
     def __init__(self, itemType: str, quantity=1):
         self._type = itemType

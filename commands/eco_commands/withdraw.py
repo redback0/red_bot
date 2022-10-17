@@ -26,7 +26,7 @@ async def execute(bot, msg, path):
 
 	except ValueError:
 		log.info("User entered NaN")
-		await msg.reply("")
+		await msg.reply("Please enter an integer number.")
 		return
 
 
