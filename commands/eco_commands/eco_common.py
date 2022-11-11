@@ -1,9 +1,11 @@
-import os
-from importlib import import_module, util
 import json
 import logging
+import os
 from datetime import *
+from importlib import import_module, util
+
 import discord
+
 import globs
 
 logging.basicConfig()
@@ -24,7 +26,7 @@ class ItemType:
         self._type = itemType
         self._description = description
         self._cost = cost
-        self._useAble = useAble
+        self._useAble = useAble  # just for debugging purposes
         self._buyAble = buyAble
 
         if util.find_spec(f"{self._path}{itemType}"):
@@ -72,7 +74,7 @@ class Item:
     # used as a reference for `.eco shop` as well as for adding items
     # as well as certain Item methods
     itemTypes = {
-        # "type": ItemType("type", "description", cost)
+        # "type": ItemType("type", "description", cost, useAble, buyAble)
         "stuff": ItemType("stuff", "A bunch of useless stuff (don't buy)", 100, False, True),
         "pickaxe": ItemType("pickaxe", "Seems kinda blunt", 5000, True, True),
         "wagerizer": ItemType("wagerizer", "Increases your eco daily by 100 points. Does not stack.", 15000, False,

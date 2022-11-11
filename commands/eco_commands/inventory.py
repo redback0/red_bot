@@ -1,7 +1,3 @@
-import logging
-import discord
-import globs
-
 from commands.eco_commands.eco_common import *
 
 logging.basicConfig()
@@ -19,9 +15,9 @@ async def execute(bot, msg, path):
 
     # test if the user made any mentions, if so use the first mention
     if not msg.mentions:
-        user = msg.author
+        user: discord.User = msg.author
     else:
-        user = msg.mentions[0]
+        user: discord.User = msg.mentions[0]
 
     userData = UserData.getUserData(path, user)
     log.debug(userData)
@@ -32,7 +28,7 @@ async def execute(bot, msg, path):
         log.info('User\'s inventory is empty')
         return
 
-    inventory = discord.Embed(title='Inventory')
+    inventory = discord.Embed(title=f'{user.name}\'s Inventory')
 
     for item in userData.inventory:
         inventory.add_field(name=f"{item.type.capitalize()} x{item.quantity}", value=item.describe())

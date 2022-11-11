@@ -1,19 +1,26 @@
-import globs
-import logging
-
 from commands.eco_commands.eco_common import *
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(globs.LOGLEVEL)
 
-name = "shop"
-description = "Buy or view available items"
-usage = f"{globs.DEF_PREFIX}eco shop [buy|sell] <item> [quantity=1]]"
+name = "item"
+description = "Buy, view or sell available items"
+usage = f"{globs.DEF_PREFIX}eco shop [buy|sell|view] <item> [quantity=1]]"
 
 """
-Buy or view items
+Buy sell, or view items
 """
+
+
+def _show_items(embed: discord.Embed) -> None:
+    """
+    Adds the item fields to the provided embed.
+    """
+
+    for itemKey in Item.itemTypes.keys():
+        item = Item.itemTypes[itemKey]
+        embed.add_field(name=item.type, value=item.describe())
 
 
 async def execute(bot, msg, path):
@@ -23,28 +30,63 @@ async def execute(bot, msg, path):
 
     # if we have no args, display the items in the shop
     if len(args) == 0:
-        shop = discord.Embed(title="Shop")
+        shopEmbed = discord.Embed(title="Item Shop")
 
         # if there are no items, tell the user that
         if len(Item.itemTypes.keys()) == 0:
-            shop.description = "Sorry, no items in the shop"
+            shopEmbed.description = "Sorry, no items are available."
 
         else:
+
             # add each item to the discord embed
-            for itemKey in Item.itemTypes.keys():
-                item = Item.itemTypes[itemKey]
-                shop.add_field(name=item.type, value=item.describe())
+            _show_items(shopEmbed)
 
             # tell the user how to buy an item
-            shop.description = "To buy something do " + \
-                               f"`{globs.DEF_PREFIX}eco shop buy <itemName> [quantity]`"
+            shopEmbed.description = "To buy something enter: " + \
+                                    f"`{globs.DEF_PREFIX}eco shop buy <item> [quantity=1]`"
 
-        await msg.reply(embed=shop)
+        await msg.reply(embed=shopEmbed)
         log.info("Displayed shop")
         return
 
+    if args[0] == "view":
+        # check if there is enough arguments
+        if len(args) < 2:
+            await msg.reply(
+                f"Please specify what you'd like to view. Usage: {usage}")
+            log.info("User didn't specify what to view")
+            return
+
+        # parse args[1] as itemType
+        try:
+            itemType = Item.itemTypes[args[1]]
+
+        except KeyError:
+            await msg.reply(f"Sorry, {args[1]} isn't a valid item")
+            log.info(f"{args[1]} isn't a valid item")
+            return
+
+        # create embed
+        itemEmbed = discord.Embed(title=f"{str(itemType.type).title()}")
+
+        itemEmbed.description = itemType.description
+
+        if itemType.buyAble:
+            cost = f"${itemType.cost}"
+        else:
+            cost = "N/A"
+
+        itemEmbed.add_field(name="Cost", value=cost)
+        itemEmbed.add_field(name="Buy-able", value=f"{'Yes' if itemType.buyAble else 'No'}")
+        itemEmbed.add_field(name="Use-able", value=f"{'Yes' if itemType.useAble else 'No'}")
+
+        await msg.reply(embed=itemEmbed)
+        log.info(f"Displayed {itemType.type}")
+
+        return
+
     # check that the user specified to buy
-    if args[0] == "buy":
+    elif args[0] == "buy":
 
         # check if there's enough arguments
         if len(args) < 2:
@@ -170,7 +212,7 @@ async def execute(bot, msg, path):
         userData.saveUserData(path)
         return
 
-    # if args[1] is neither 'sell' or 'buy'
+    # if args[1] is neither 'sell' nor 'buy'
     await msg.reply(f"Invalid option {usage}; try either `sell` or `buy`")
     log.info(f"User gave an invalid argument `{globs.DEF_PREFIX}eco shop [badArg]`")
     return

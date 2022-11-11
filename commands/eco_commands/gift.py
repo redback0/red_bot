@@ -1,15 +1,17 @@
-from commands.eco_commands.eco_common import *
 import logging
+
 import discord
+
 import globs
+from commands.eco_commands.eco_common import *
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(globs.LOGLEVEL)
 
 name = 'gift'
-description = 'Gift a user an item.'
-usage = f"{globs.DEF_PREFIX}eco gift <@user> <item> [amount]"
+description = f'Gift a user an item. You will be taxed {globs.ITEM_GIFTING_TAX_RATE * 100}% for the items worth.'
+usage = f"{globs.DEF_PREFIX}eco gift <@user> <item> [quantity]"
 permissions = "guilds"
 
 
@@ -54,19 +56,19 @@ async def execute(bot: discord.Client, msg: discord.Message, path: str) -> None:
 
     if len(args) == 3:
         try:
-            amount = int(args[2])
+            quantity = int(args[2])
         except ValueError:
             log.info("Amount is not a number")
             await msg.reply(f"Please use a positive integer greater than 0, not `{args[2]}`.")
             return
 
-        if amount < 1:
+        if quantity < 1:
             log.info("Amount is less than 1")
             await msg.reply(f"Please use a positive integer greater than 0, not `{args[2]}`.")
             return
 
     else:
-        amount = 1
+        quantity = 1
 
     # gifted user, item, amount
 
@@ -80,30 +82,39 @@ async def execute(bot: discord.Client, msg: discord.Message, path: str) -> None:
         await msg.reply(f"You do not have that item to gift.")
         return
 
-    elif gifterData.searchInventory(item) < amount:
+    elif gifterData.inventory[gifterData.searchInventory(item)].quantity < quantity:
         # user does not have enough item
         log.info("gifter does not have enough items")
         await msg.reply("You do not have enough items to gift!")
         return
 
+    giftTax = int(Item.itemTypes[item].cost * quantity * globs.ITEM_GIFTING_TAX_RATE)
+
+    # check if user has enough money to pay the tax
+    if gifterData.wallet < giftTax:
+        log.info("gifter does not have enough money to pay tax")
+        await msg.reply(f"You do not have enough money to pay the gift tax of `{globs.ECO_CURRENCY_SYMBOL}{giftTax}`.")
+        return
+
+    # tax the gifter
+    gifterData.wallet -= giftTax
+
     giftedData = UserData.getUserData(path, giftedUser)
 
     # remove item from gifter
-    gifterData.invRemoveItem(item, amount)
+    gifterData.invRemoveItem(item, quantity)
 
     # add item to gifted
-    giftedData.invAddItem(item, amount)
+    giftedData.invAddItem(item, quantity)
 
     # save both gifted and gifter
     giftedData.saveUserData(path)
     gifterData.saveUserData(path)
 
     # success
-    log.info(f"user {msg.author} gave {giftedUser} {amount}x {item}.")
+    log.info(
+        f"user {msg.author} gave {giftedUser} {quantity}x {item}, and paid {globs.ECO_CURRENCY_SYMBOL}{giftTax} tax")
 
-    await msg.reply(f"You gave {giftedUser} `{amount}`x `{item}`!")
+    await msg.reply(
+        f"You gave {giftedUser} `{quantity}x` `{item}`, and paid `{globs.ECO_CURRENCY_SYMBOL}{giftTax}` tax.")
     return
-
-
-
-
