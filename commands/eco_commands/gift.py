@@ -1,8 +1,3 @@
-import logging
-
-import discord
-
-import globs
 from commands.eco_commands.eco_common import *
 
 logging.basicConfig()
@@ -10,7 +5,7 @@ log = logging.getLogger(__name__)
 log.setLevel(globs.LOGLEVEL)
 
 name = 'gift'
-description = f'Gift a user an item. You will be taxed {globs.ITEM_GIFTING_TAX_RATE * 100}% for the items worth.'
+description = f'Gift another user an item. You will be taxed {globs.ITEM_GIFTING_TAX_RATE * 100}% for the items worth.'
 usage = f"{globs.DEF_PREFIX}eco gift <@user> <item> [quantity]"
 permissions = "guilds"
 
@@ -46,6 +41,12 @@ async def execute(bot: discord.Client, msg: discord.Message, path: str) -> None:
     # check arg types and assign variables
 
     giftedUser = userMentions[0]
+
+    # check if the user is trying to gift themselves
+    if giftedUser.id == msg.author.id:
+        log.info("User tried to gift themselves")
+        await msg.reply("You can't gift yourself an item!")
+        return
 
     item = args[1].lower()
 
