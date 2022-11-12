@@ -50,7 +50,7 @@ async def execute(bot: discord.Client, msg: discord.Message, path: str) -> None:
 
     item = args[1].lower()
 
-    if not Item.itemTypes.get(item, False):
+    if Item.itemTypes.get(item, None) is None:
         log.info("Unknown item")
         await msg.reply(f"Oops! You named an item that doesn't exist: `{item}`")
         return
