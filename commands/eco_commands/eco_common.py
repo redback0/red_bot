@@ -77,6 +77,8 @@ class Item:
         # "type": ItemType("type", "description", cost, useAble, buyAble)
         "stuff": ItemType("stuff", "A bunch of useless stuff (don't buy)", 100, False, True),
         "pickaxe": ItemType("pickaxe", "Seems kinda blunt", 5000, True, True),
+        "wagerizer": ItemType("wagerizer", "Increases your eco daily by 100 points. Does not stack.", 15000, False,
+                              True)
     }
 
     blankItemType = ItemType("none", "This item doesn't exist", 99999999, False, False)

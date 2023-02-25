@@ -1,6 +1,3 @@
-from datetime import date
-import logging
-import globs
 from commands.eco_commands.eco_common import *
 
 logging.basicConfig()
@@ -37,14 +34,16 @@ async def execute(bot, msg, path):
 		wagerizerInvIndex = userData.searchInventory("wagerizer")
 
 		if wagerizerInvIndex != -1:
-
 			wagerizerBonus += 100
 
 		# set lastDaily then add daily amount to users wallet
 		userData.lastDaily = today
-		userData.wallet += UserData.dailyAmount + wagerizerBonus
 
-		await msg.reply(f'You got {UserData.dailyAmount + wagerizerBonus} points! Your total is now {userData.wallet}')
+		totalDeposit = UserData.dailyAmount + wagerizerBonus
+
+		userData.wallet += totalDeposit
+
+		await msg.reply(f'You got {totalDeposit} points! Your total is now {userData.wallet} points.')
 
 		log.info(f'Gave {msg.author.name}#{msg.author.discriminator} 500 points')
 
