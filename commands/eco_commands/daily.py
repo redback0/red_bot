@@ -1,6 +1,3 @@
-from datetime import date
-import logging
-import globs
 from commands.eco_commands.eco_common import *
 
 logging.basicConfig()
@@ -14,11 +11,10 @@ servers = []
 
 # give a user 500 points, usable once per day
 async def execute(bot, msg, path):
-
 	userData = UserData.getUserData(path, msg.author)
 	log.debug(userData)
 
-	# get todays date, to be used in the if, and to set lastDaily
+	# get today's date, to be used in the if, and to set lastDaily
 	today = date.today()
 
 	lastDaily = userData.lastDaily
@@ -29,15 +25,25 @@ async def execute(bot, msg, path):
 	else:
 		lastDaily = lastDaily
 
-
 	# check lastDaily, if it's before today wallet + 500, otherwise do nothing
 	if lastDaily < today:
 
-		#set lastDaily then add 500 to users wallet
+		# get wagerizer bonus amount
+
+		wagerizerBonus = 0
+		wagerizerInvIndex = userData.searchInventory("wagerizer")
+
+		if wagerizerInvIndex != -1:
+			wagerizerBonus += 100
+
+		# set lastDaily then add daily amount to users wallet
 		userData.lastDaily = today
-		userData.wallet += UserData.dailyAmount
-		
-		await msg.reply(f'You got {UserData.dailyAmount} points! Your total is now {userData.wallet}')
+
+		totalDeposit = UserData.dailyAmount + wagerizerBonus
+
+		userData.wallet += totalDeposit
+
+		await msg.reply(f'You got {totalDeposit} points! Your total is now {userData.wallet} points.')
 
 		log.info(f'Gave {msg.author.name}#{msg.author.discriminator} 500 points')
 
@@ -47,3 +53,5 @@ async def execute(bot, msg, path):
 	else:
 		await msg.reply('Oops! You\'ve already done this today, try again tomorrow!')
 		log.info(f'{msg.author.name} has already claimed they\'re points')
+
+

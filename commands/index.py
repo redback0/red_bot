@@ -1,5 +1,8 @@
-from importlib import import_module
 import logging
+from importlib import import_module
+
+import discord
+
 import globs
 
 CREATOR = globs.CREATOR
@@ -8,143 +11,139 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(globs.LOGLEVEL)
 
-
 path = 'commands.'
-
 
 """
 command:
-	A container for a command
+    A container for a command
 """
-class Command():
-
-	def __init__(self, module):
-		# set garanteed values
-		self._execute = module.execute
-		self._name = module.name
-		self._description = module.description
-
-		# set other values!
-		try:
-			self._permissions = module.permissions
-
-			if self.permissions == "guilds":
-				try:
-					self._guilds = module.guilds
-
-				except:
-					self._guilds = None
-
-			elif self.permissions == "roles":
-				try:
-					self._roles = module.roles
-
-				except:
-					self._roles = None
-
-			elif self.permissions == "roleperms":
-				try:
-					self._roleperms = module.roleperms
-
-				except:
-					self._roleperms = None
-
-		except:
-			self._permissions = None
 
 
+class Command:
 
+    def __init__(self, module) -> None:
+        # set guaranteed values
+        self._execute = module.execute
+        self._name = module.name
+        self._description = module.description
 
-	@property
-	# name: the name of your command e.g. this.py would have the name "this"
-	def name(self):
-		return self._name
+        # set other values!
+        try:
+            self._permissions = module.permissions
 
-	@property
-	# description: a short description of the command
-	def description(self):
-		return self._description
+            if self.permissions == "guilds":
+                try:
+                    self._allowedGuilds = module.allowedGuilds
 
-	@property
-	# permissions: what permission level is required to run the command, can be
-	# "guilds", "roles", or "creator"
-	def permissions(self):
-		return self._permissions
+                except AttributeError:
+                    self._allowedGuilds = None
 
-	# guilds: what guilds the command can be used in: requires permissions
-	# to be set to "guilds"
-	@property
-	def guilds(self):
-		return self._guilds
+            elif self.permissions == "roles":
+                try:
+                    self._roles = module.roles
 
-	# roles: what roles are allowed to use the command: requires permissions
-	# to be set to "roles"
-	@property
-	def roles(self):
-		return self._roles
+                except AttributeError:
+                    self._roles = None
 
+            elif self.permissions == "roleperms":
+                try:
+                    self._rolePerms = module.roleperms
 
-	"""
-	Checks whether the user has permission to run the command
-	"""
-	def check_perms(self, msg):
+                except AttributeError:
+                    self._rolePerms = None
 
-		if self.permissions == None:
-			return True
+        except AttributeError:
+            self._permissions = None
 
-		elif msg.author.id == CREATOR:
-			return True
+    @property
+    # name: the name of your command e.g. this.py would have the name "this"
+    def name(self):
+        return self._name
 
-		elif self.permissions == "guilds":
-			if msg.guild == None:
-				guild = None
+    @property
+    # description: a short description of the command
+    def description(self):
+        return self._description
 
-			else:
-				guild = msg.guild.id
+    @property
+    # permissions: what permission level is required to run the command, can be
+    # "guilds", "roles", or "creator"
+    def permissions(self):
+        return self._permissions
 
-			log.debug(f"guild ID: {guild}")
+    # guilds: what guilds the command can be used in: requires permissions
+    # to be set to "guilds"
+    @property
+    def allowedGuilds(self):
+        return self._allowedGuilds
 
-			if guild in self.guilds:
-				return True
+    # roles: what roles are allowed to use the command: requires permissions
+    # to be set to "roles"
+    @property
+    def roles(self):
+        return self._roles
 
+    def check_perms(self, msg: discord.Message) -> bool:
+        """
+        Checks whether the user has permission to run the command
+        """
 
-		elif self.permissions == "roles":
-			# roles permission is not yet implemented
-			pass
+        if self.permissions is None:
+            return True
 
+        elif msg.author.id == CREATOR:
+            return True
 
-		elif self.permissions == "roleperms":
-			# not yet implemented
-			pass
+        elif self.permissions == "guilds":
+            if msg.guild is None:
+                guild = None
 
-		return False
+            else:
+                guild = msg.guild.id
 
-	"""
-	Execute the command if permissions are met
-	"""
-	async def execute(self, bot, msg):
-		log.info(f"checking perms for command {self.name}")
+            log.debug(f"guild ID: {guild}")
 
-		# if check_perms is true, excute command
-		if self.check_perms(msg):
-			await self._execute(bot, msg)
-		else:
-			await msg.channel.send(
-				"Command failed: you don't have the necessary permissions")
-			log.info(
-				f"Command failed: {self.name}, " +
-				f"{msg.author.name} doesn't have the necessary permissions")
+            if self.allowedGuilds is None:
+                return False
 
+            if guild in self.allowedGuilds:
+                return True
+
+        elif self.permissions == "roles":
+            # roles permission is not yet implemented
+            pass
+
+        elif self.permissions == "roleperms":
+            # not yet implemented
+            pass
+
+        return False
+
+    async def execute(self, bot, msg):
+        """
+        Execute the command if permissions are met
+        """
+
+        log.info(f"checking perms for command {self.name}")
+
+        # if check_perms is true, excute command
+        if self.check_perms(msg):
+            await self._execute(bot, msg)
+        else:
+            await msg.channel.send(
+                "Command failed: you don't have the necessary permissions")
+            log.info(
+                f"Command failed: {self.name}, " +
+                f"{msg.author.name} doesn't have the necessary permissions")
 
 
 # dictionary that associates a string with a command instance
 cmds = {
-	'test': Command(import_module(f'{path}test')),
-	'repeat': Command(import_module(f'{path}repeat')),
-	'cringe': Command(import_module(f'{path}cringe')),
-	'server': Command(import_module(f'{path}server')),
-	'eco': Command(import_module(f'{path}eco')),
-	'script': Command(import_module(f'{path}script')),
-	'rrsetup': Command(import_module(f'{path}rrsetup'))
+    'test': Command(import_module(f'{path}test')),
+    'repeat': Command(import_module(f'{path}repeat')),
+    'cringe': Command(import_module(f'{path}cringe')),
+    'server': Command(import_module(f'{path}server')),
+    'eco': Command(import_module(f'{path}eco')),
+    'script': Command(import_module(f'{path}script')),
+    'rrsetup': Command(import_module(f'{path}rrsetup'))
 }
-
