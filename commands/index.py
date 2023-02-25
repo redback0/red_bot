@@ -1,5 +1,5 @@
-from importlib import import_module
 import logging
+from importlib import import_module
 
 import discord
 
@@ -15,11 +15,11 @@ path = 'commands.'
 
 """
 command:
-	A container for a command
+    A container for a command
 """
 
 
-class Command():
+class Command:
 
     def __init__(self, module) -> None:
         # set guaranteed values
