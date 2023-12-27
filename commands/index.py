@@ -147,6 +147,7 @@ cmds = {
 	'script':	Command(import_module(f'{path}script')),
 	'rrsetup':	Command(import_module(f'{path}rrsetup')),
 	'join':		Command(import_module(f'{path}join')),
-	'leave':	Command(import_module(f'{path}leave'))
+	'leave':	Command(import_module(f'{path}leave')),
+	'play':		Command(import_module(f'{path}play'))
 }
 
