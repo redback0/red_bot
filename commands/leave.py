@@ -14,11 +14,9 @@ async def execute(bot, msg):
 
 	voice_client = get(bot.voice_clients, guild=msg.guild)
 
-	log.info(voice_client)
-
-	if voice_client:
+	if voice_client and voice_client.is_connected():
 		await voice_client.disconnect()
-		if voice_client.is_connected() == True:
+		if voice_client.is_connected():
 			await msg.channel.send("Failed to leave VC")
 			log.info("failed to leave VC")
 		else:
