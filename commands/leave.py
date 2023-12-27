@@ -1,5 +1,6 @@
 import logging
 import globs
+from discord.utils import get
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -11,16 +12,18 @@ permissions = "creator"
 
 async def execute(bot, msg):
 
-	# if voiceClient exists, attempt to leave
-	if bot.voiceClients.get(msg.guild.id, False):
-		await bot.voiceClients[msg.guild.id].disconnect()
-		if bot.voiceClients[msg.guild.id].is_connected() == True:
+	voice_client = get(bot.voice_clients, guild=msg.guild)
+
+	log.info(voice_client)
+
+	if voice_client:
+		await voice_client.disconnect()
+		if voice_client.is_connected() == True:
 			await msg.channel.send("Failed to leave VC")
-			log.info("Left VC")
+			log.info("failed to leave VC")
 		else:
 			await msg.channel.send("Left VC :(")
 			log.info("Left VC")
-			bot.voiceClients.pop(msg.guild.id)
 
 	# voiceClient doesn't exist
 	else:

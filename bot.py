@@ -28,7 +28,6 @@ log.info(f'Prefix: {DEF_PREFIX}')
 class MyClient(discord.Client):
 
 	async def on_ready(self):
-		self.voiceClients = {}
 		log.info(f'logged in as {self.user}')
 
 	async def on_message(self, msg):
