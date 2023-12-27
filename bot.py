@@ -25,7 +25,9 @@ log.info(f'Prefix: {DEF_PREFIX}')
 
 
 class MyClient(discord.Client):
+
 	async def on_ready(self):
+		self.voiceClients = {}
 		log.info(f'logged in as {self.user}')
 
 	async def on_message(self, msg):
@@ -33,9 +35,6 @@ class MyClient(discord.Client):
 		# make sure the message isn't from this bot
 		# or an empty message
 		if msg.author == self.user or msg.content == None or msg.content == '':
-			return
-
-		if msg.content == '':
 			return
 
 		# pointless dumb command

@@ -139,12 +139,14 @@ class Command():
 
 # dictionary that associates a string with a command instance
 cmds = {
-	'test': Command(import_module(f'{path}test')),
-	'repeat': Command(import_module(f'{path}repeat')),
-	'cringe': Command(import_module(f'{path}cringe')),
-	'server': Command(import_module(f'{path}server')),
-	'eco': Command(import_module(f'{path}eco')),
-	'script': Command(import_module(f'{path}script')),
-	'rrsetup': Command(import_module(f'{path}rrsetup'))
+	'test':		Command(import_module(f'{path}test')),
+	'repeat':	Command(import_module(f'{path}repeat')),
+	'cringe':	Command(import_module(f'{path}cringe')),
+	'server':	Command(import_module(f'{path}server')),
+	'eco':		Command(import_module(f'{path}eco')),
+	'script':	Command(import_module(f'{path}script')),
+	'rrsetup':	Command(import_module(f'{path}rrsetup')),
+	'join':		Command(import_module(f'{path}join')),
+	'leave':	Command(import_module(f'{path}leave'))
 }
 
