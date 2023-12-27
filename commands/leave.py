@@ -10,7 +10,7 @@ description = 'leave a voice channel D:'
 permissions = "creator"
 
 async def execute(bot, msg):
-	
+
 	# if voiceClient exists, attempt to leave
 	if bot.voiceClients.get(msg.guild.id, False):
 		await bot.voiceClients[msg.guild.id].disconnect()
