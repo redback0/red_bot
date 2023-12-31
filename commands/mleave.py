@@ -6,7 +6,7 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(globs.LOGLEVEL)
 
-name = 'leave'
+name = 'mleave'
 description = 'leave a voice channel D:'
 permissions = "creator"
 
