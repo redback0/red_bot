@@ -146,8 +146,9 @@ cmds = {
 	'eco':		Command(import_module(f'{path}eco')),
 	'script':	Command(import_module(f'{path}script')),
 	'rrsetup':	Command(import_module(f'{path}rrsetup')),
-	'join':		Command(import_module(f'{path}join')),
-	'leave':	Command(import_module(f'{path}leave')),
-	'play':		Command(import_module(f'{path}play'))
+	'mjoin':	Command(import_module(f'{path}mjoin')),
+	'mleave':	Command(import_module(f'{path}mleave')),
+	'mplay':	Command(import_module(f'{path}mplay')),
+	'mlist':	Command(import_module(f'{path}mlist'))
 }
 
