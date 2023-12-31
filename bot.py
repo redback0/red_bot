@@ -112,7 +112,6 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 
 
-
 	async def on_raw_reaction_add(self, payload):
 
 		if self.user.id == payload.user_id:
@@ -139,8 +138,6 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 
 
-
-
 	async def on_raw_reaction_remove(self, payload):
 
 		# set guild based on payload.guild_id
@@ -161,7 +158,6 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 		if has_role(user, role):
 
 			await user.remove_roles(role)
-
 
 
 
@@ -226,8 +222,6 @@ def has_role(user, role):
 			return True
 
 	return False
-
-
 
 
 
