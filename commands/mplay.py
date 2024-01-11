@@ -10,7 +10,7 @@ log.setLevel(globs.LOGLEVEL)
 
 name = 'mplay'
 description = 'plays audio :)'
-permissions = "creator"
+permissions = None
 
 async def execute(bot, msg):
 

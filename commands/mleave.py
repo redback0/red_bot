@@ -8,7 +8,7 @@ log.setLevel(globs.LOGLEVEL)
 
 name = 'mleave'
 description = 'leave a voice channel D:'
-permissions = "creator"
+permissions = None
 
 async def execute(bot, msg):
 
