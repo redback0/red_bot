@@ -31,6 +31,6 @@ async def execute(bot, msg):
 			log.info("File does not exist, cannot play")
 	else:
 		await msg.channel.send(
-			f"I'm not in a VC, use {globs.DEF_PREFIX}join first")
+			f"I'm not in a VC, use {globs.DEF_PREFIX}mjoin first")
 		log.info("Not in a vc, cannot play")
 
