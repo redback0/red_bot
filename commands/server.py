@@ -86,19 +86,18 @@ def infoBuilder(res, args):
 
 			username = user.name
 
-			i = -2
-
 			log.debug(username)
 
-			while username[i+2:].find("_") >= 0:
+			i = 0
+			while username[i:].find("_") >= 0:
 
-				i = username.find("_")
+				i = i + username[i:].find("_")
 
 				username = username[:i] + "\\" + username[i:]
 
 				log.debug(username)
 
-				if i < 0: break
+				i += 2
 
 
 			userNames.append(username)
