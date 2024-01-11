@@ -3,3 +3,5 @@
 Implement permissions for `roles` and `roleperms`
 
 `rredit` edit reaction role messages
+
+Stop using this code :D
