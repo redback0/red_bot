@@ -3,7 +3,6 @@ import globs
 import os
 import json
 import discord
-import time
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -13,10 +12,13 @@ name = 'rrsetup'
 description = 'Used to setup reaction roles'
 permissions = "creator" # this should be "roleperms" with roleperms = "admin"
 
+
 usage = f"""{globs.DEF_PREFIX}rrsetup #channel-for-message
-emoji = role
-emoji = role
-emoji = role"""
+emoji = @role
+emoji = @role
+emoji = @role"""
+
+rrPath = "reaction_roles.json"
 
 async def execute(bot, msg):
 
@@ -49,19 +51,15 @@ async def execute(bot, msg):
 			rrPairs[columns[0]] = columns[1]
 
 
-
 	emojis = rrPairs.keys()
 
 
 	#create the message for rr
 	message = "React to get role:"
-
-
 	for emoji in emojis:
-
 		role = msg.guild.get_role(int(rrPairs[emoji]))
-
 		message += f"\n{emoji} {role.mention}"
+
 
 	sentMessage = await msg.channel_mentions[0].send(message)
 
@@ -70,14 +68,12 @@ async def execute(bot, msg):
 		try:
 			await sentMessage.add_reaction(emoji)
 		except discord.HTTPException as error:
-			log.debug("Bad emoji")
+			log.debug("Failed to react: Bad emoji")
 			await sentMessage.delete()
 			await msg.reply(f"{emoji} is not a valid emoji here")
 			return
 
-
 	#create json entry
-	rrPath = "reaction_roles.json"
 
 	# if file exists, open and dump json to data
 	if os.path.isfile(rrPath):
@@ -101,3 +97,4 @@ async def execute(bot, msg):
 
 
 	await msg.reply("Reaction roles added")
+

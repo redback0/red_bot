@@ -2,6 +2,7 @@
 *.pyc
 /TEMP/**
 **/guilds/**
+reaction_roles.json
 **/UserData_Class.md
 **/.vscode
 audio/**

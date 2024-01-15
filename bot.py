@@ -10,6 +10,7 @@ import globs
 globs.init()
 DEF_PREFIX = globs.DEF_PREFIX
 CREATOR = globs.CREATOR
+
 # import a dictionary of all commands
 # this allows me to link a string to a module
 import commands.index as cmd_index
@@ -63,7 +64,6 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 				if msg.guild == None:
 					guild = None
-
 				else:
 					guild = msg.guild.id
 
@@ -77,7 +77,6 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 						if not cmd_index.cmds[key].name == key:
 							helpmsgdesc += f'Alias for {cmd_index.cmds[key].name}\n'
-
 						else:
 							helpmsgdesc += f'{cmd_index.cmds[key].description}\n'
 
@@ -112,6 +111,8 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 
 
 
+# STUFF FOR REACTION ROLLS ****************************************************
+
 	async def on_raw_reaction_add(self, payload):
 
 		if self.user.id == payload.user_id:
@@ -133,12 +134,14 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 		user = guild.get_member(payload.user_id)
 
 		if not has_role(user, role):
-
 			await user.add_roles(role)
 
 
 
 	async def on_raw_reaction_remove(self, payload):
+
+		if self.user.id == payload.user_id:
+			return
 
 		# set guild based on payload.guild_id
 		guild = self.get_guild(payload.guild_id)
@@ -156,14 +159,13 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 		user = guild.get_member(payload.user_id)
 
 		if has_role(user, role):
-
 			await user.remove_roles(role)
 
 
 
 def get_reaction_role(guild, message_id : str, emoji : str):
-	log.debug("finding role")
 
+	log.debug("finding role")
 
 	rrPath = "reaction_roles.json"
 
