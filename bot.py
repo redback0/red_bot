@@ -48,6 +48,7 @@ class MyClient(discord.Client):
 				and msg.channel.type == discord.ChannelType.private\
 				and "kiss" in msg.content:
 			await msg.channel.send('😘')
+			log.info("kiss emoji :)))")
 
 		# actual useful commands
 		elif msg.content[0] == DEF_PREFIX:
