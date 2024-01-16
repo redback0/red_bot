@@ -43,6 +43,12 @@ class MyClient(discord.Client):
 			await msg.channel.send('yo wuddup')
 			log.info("said 'yo wuddup'")
 
+		# :flushed:
+		if (msg.author.id == 525289634251407401 or msg.author.id == CREATOR)\
+				and msg.channel.type == discord.ChannelType.private\
+				and "kiss" in msg.content:
+			await msg.channel.send('😘')
+
 		# actual useful commands
 		elif msg.content[0] == DEF_PREFIX:
 
