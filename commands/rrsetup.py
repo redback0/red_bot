@@ -55,13 +55,14 @@ async def execute(bot, msg):
 
 
 	#create the message for rr
-	message = "React to get role:"
+	message = ""
 	for emoji in emojis:
 		role = msg.guild.get_role(int(rrPairs[emoji]))
 		message += f"\n{emoji} {role.mention}"
 
+	embed = discord.Embed(title="React to get role", description=message, color=0x990000)
 
-	sentMessage = await msg.channel_mentions[0].send(message)
+	sentMessage = await msg.channel_mentions[0].send(embed=embed)
 
 	# react to the sent message with all the emoji
 	for emoji in emojis:
