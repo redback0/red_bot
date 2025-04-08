@@ -19,7 +19,7 @@ async def execute(bot, msg):
 		files = [file[:-4] for file in files]
 		if len(files) > 0:
 			tracks = "```" + "\n".join(files) + "```"
-			await msg.channel.send(tracks)
+			await msg.reply(tracks)
 			log.info("listed audio tracks")
 		else:
-			await msg.channel.send("No tracks")
+			await msg.reply("No tracks")

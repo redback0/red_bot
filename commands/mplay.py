@@ -27,10 +27,10 @@ async def execute(bot, msg):
 			source = await discord.FFmpegOpusAudio.from_probe(audio)
 			voice_client.play(source)
 		else:
-			await msg.channel.send("Audio does not exist")
+			await msg.reply("Audio does not exist")
 			log.info("File does not exist, cannot play")
 	else:
-		await msg.channel.send(
+		await msg.reply(
 			f"I'm not in a VC, use {globs.DEF_PREFIX}mjoin first")
 		log.info("Not in a vc, cannot play")
 

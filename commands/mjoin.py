@@ -15,21 +15,21 @@ async def execute(bot, msg):
 
 	channel = msg.author.voice.channel
 	if not channel:
-		await msg.channel.send("Join a VC so I can join you!")
+		await msg.reply("Join a VC so I can join you!")
 		log.info(f"User is not in a VC, exitting")
 	else:
 		voice_client = get(bot.voice_clients, guild=msg.guild)
 		if voice_client:
 			if voice_client.is_connected():
 				log.info("Already Connected to VC")
-				await msg.channel.send("Already in VC")
+				await msg.reply("Already in VC")
 			else:
 				await voice_client.move_to(channel)
-				await msg.channel.send("Joined VC!")
+				await msg.reply("Joined VC!")
 				log.info(f"Joined vc in {msg.guild.name}")
 		else:
 			await channel.connect(self_deaf=True)
-			await msg.channel.send("Joined VC!")
+			await msg.reply("Joined VC!")
 			log.info(f"Joined vc in {msg.guild.name}")
 
 

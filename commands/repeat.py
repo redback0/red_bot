@@ -14,12 +14,12 @@ async def execute(bot, msg):
 	if msg.author.id == 208038162180734976:
 		if msg.content.find(' ') > 0:
 			message = msg.content[msg.content.find(' ')+1:]
-			await msg.channel.send(message)
+			await msg.reply(message)
 			log.info(f'repeated text: {message}')
 		else:
-			await msg.channel.send('Add something for me to repeat!')
+			await msg.reply('Add something for me to repeat!')
 			log.info('no text to repeat')
 
 	else:
-		await msg.channel.send(f'<@!{msg.author.id}> is 100% cringe')
+		await msg.reply(f'<@!{msg.author.id}> is 100% cringe')
 		log.info(f'{msg.author.username}#{msg.author.discriminator} attempted to repeat')
