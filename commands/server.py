@@ -18,7 +18,7 @@ async def execute(bot, msg):
 
 	# create args list, a list of all words after the command
 	if not ' ' in msg.content:
-		await msg.channel.send('You need to specify a server to ping')
+		await msg.reply('You need to specify a server to ping')
 		log.info('No server given')
 		return
 	args = msg.content[msg.content.find(' ')+1:].split()
@@ -31,12 +31,12 @@ async def execute(bot, msg):
 	try:
 		status = server.status()
 	except:
-		await msg.channel.send('Server offline')
+		await msg.reply('Server offline')
 		log.info('Server offline')
 		return
 
 	info = infoBuilder(status, args)
-	await msg.channel.send(embed=info)
+	await msg.reply(embed=info)
 
 
 # takes the response of a ping and puts it in a nice format for discord

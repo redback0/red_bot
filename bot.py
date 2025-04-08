@@ -40,7 +40,7 @@ class MyClient(discord.Client):
 
 		# pointless dumb command
 		if msg.content == 'yo wuddup' and msg.author.id == CREATOR:
-			await msg.channel.send('yo wuddup')
+			await msg.reply('yo wuddup')
 			log.info("said 'yo wuddup'")
 
 		# actual useful commands
@@ -52,8 +52,15 @@ class MyClient(discord.Client):
 			else:
 				command = msg.content[1:]
 
-			log.info(f'Command: {command}, called from: {msg.channel.name} \
+			if isinstance(msg.channel, discord.GroupChannel):
+				log.info(f'Command: {command}, called from: {msg.channel.name} \
 in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
+			elif isinstance(msg.guild, discord.Guild):
+				log.info(f'Command: {command}, called from: Unknown \
+in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
+			else:
+				log.info(f'Command: {command}, called from: Unknown \
+by {msg.author.name}#{msg.author.discriminator}')
 
 			# special case commands
 
@@ -85,7 +92,7 @@ in {msg.guild.name} by {msg.author.name}#{msg.author.discriminator}')
 					description=helpmsgdesc)
 
 				log.info(helpmsg)
-				await msg.channel.send(embed=helpmsg)
+				await msg.reply(embed=helpmsg)
 
 				return
 

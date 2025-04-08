@@ -23,7 +23,7 @@ async def execute(bot, msg):
 		return
 
 	if not os.path.isfile(rrPath):
-		await msg.channel.send("No reaction roll messages found")
+		await msg.reply("No reaction roll messages found")
 		log.info("No file found")
 		return
 	
@@ -42,6 +42,6 @@ async def execute(bot, msg):
 			await rrmsg.delete()
 			with open(rrPath, mode='w', encoding='utf-16') as file:
 				json.dump(data, file, indent=4)
-			await msg.channel.send("Removed message")
+			await msg.reply("Removed message")
 			log.info("rr message removed")
 

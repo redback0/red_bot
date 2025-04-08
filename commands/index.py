@@ -129,7 +129,7 @@ class Command():
 		if self.check_perms(msg):
 			await self._execute(bot, msg)
 		else:
-			await msg.channel.send(
+			await msg.reply(
 				"Command failed: you don't have the necessary permissions")
 			log.info(
 				f"Command failed: {self.name}, " +
@@ -144,7 +144,7 @@ cmds = {
 	'cringe':	Command(import_module(f'{path}cringe')),
 	'server':	Command(import_module(f'{path}server')),
 	'eco':		Command(import_module(f'{path}eco')),
-	'script':	Command(import_module(f'{path}script')),
+#	'script':	Command(import_module(f'{path}script')),
 	'rrsetup':	Command(import_module(f'{path}rrsetup')),
 	'rrdel':	Command(import_module(f'{path}rrdel')),
 	'mjoin':	Command(import_module(f'{path}mjoin')),

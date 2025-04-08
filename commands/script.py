@@ -17,7 +17,7 @@ path = "commands.execute_scripts."
 async def execute(bot, msg):
 
 	if not ' ' in msg.content:
-		await msg.channel.send(
+		await msg.reply(
 			'Runs abitrary scripts, give a script as an argument')
 		log.info('No subcommand given')
 		return
@@ -46,13 +46,13 @@ async def execute(bot, msg):
 			await msg.reply(result)
 			log.info(result)
 		else:
-			await msg.channel.send("File does not exist")
+			await msg.reply("File does not exist")
 			log.info(
 				f"Failed to execute script: {script}, file does not exist")
 
 	except Exception as err:
 
-		await msg.channel.send(f"Failed to execute script: ```{err}```")
+		await msg.reply(f"Failed to execute script: ```{err}```")
 		log.warning(f"Failed to execute script: {script}")
 		log.warning(traceback.format_exc())
 		log.warning(err)
