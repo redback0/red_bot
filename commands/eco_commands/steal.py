@@ -49,22 +49,27 @@ async def execute(bot, msg, path):
 
 	# set lastSteal and now
 	now = datetime.today()
-	lastSteal = stealerData.lastSteal
+	nextAble = stealerData.lastSteal
 
 	# when lastSteal is None, set lastSteal to the earliest possible time
 	# when it's not none, attempt to convert it to datetime and add 1 hour
-	if lastSteal is None:
-		lastSteal = datetime.min
+	if nextAble is None:
+		nextAble = datetime.min
+	
+	nextAble += timedelta(days=1)
 
-	log.debug(f"lastSteal: {lastSteal}, now: {now.isoformat()}")
+	log.debug(f"nextAble: {nextAble.isoformat()}, now: {now.isoformat()}")
 
+	log.debug(f"time diff {nextAble - now}")
 
 	# check lastSteal, if it's been less then an hour, return
-	if lastSteal >= now - timedelta(hours=1):
+	if nextAble >= now:
 
-		minutes = 60 - math.floor((now - lastSteal).seconds / 60)
-		log.info(f'Steal failed: Hasn\'t been an hour, {minutes} minutes left')
-		await msg.reply(f'Oops! You have to wait another {minutes} minutes')
+		minutes = math.floor((nextAble - now).seconds / 60)
+		hours = math.floor(minutes / 60)
+		minutes -= hours * 60
+		log.info(f'Steal failed: {hours} hours {minutes} minutes remaining till able')
+		await msg.reply(f'Oops! You have to wait another {hours} hours {minutes} minutes')
 		return
 
 
